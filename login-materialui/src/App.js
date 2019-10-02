@@ -44,7 +44,8 @@ const loginStyles = makeStyles(theme => ({
     backgroundColor: deepOrange[500]
   },
   gridContainer: {
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    marginTop: theme.spacing(2)
   }
 }));
 
@@ -65,14 +66,14 @@ const Login = () => {
           <Grid container className={classes.gridContainer}>
             <Grid item >
               <Typography>
-                <Link href="http://localhost:3000" color="textSecondary" underline="none" variant="body1">
+                <Link href="http://localhost:3000" color="textSecondary" variant="body1">
                   Forgot Password?
               </Link>
               </Typography>
             </Grid>
             <Grid item >
               <Typography>
-                <Link href="http://localhost:3000" color="textPrimary" underline="none" variant="body1">
+                <Link href="http://localhost:3000" color="textPrimary" variant="body1">
                   Register for an account!
               </Link>
               </Typography>
