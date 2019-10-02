@@ -1,3 +1,9 @@
+## Links
+
+- [Roboto Font](https://fonts.google.com/specimen/Roboto)
+- [Simple Templates](https://github.com/mui-org/material-ui/blob/master/docs/src/pages/getting-started/templates)
+- [React Templates](https://material-ui.com/getting-started/templates/)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
