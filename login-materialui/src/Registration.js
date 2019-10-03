@@ -1,6 +1,4 @@
-import DateFnsUtils from '@date-io/date-fns';
-import { Button, Checkbox, Container, FormControlLabel, Grid, makeStyles, TextField, Typography, FormControl, Select, InputLabel, MenuItem } from '@material-ui/core';
-import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { Button, Checkbox, Container, FormControlLabel, Grid, makeStyles, MenuItem, TextField, Typography } from '@material-ui/core';
 import 'date-fns';
 import React, { useState } from 'react';
 
@@ -23,12 +21,11 @@ const useStyles = makeStyles(theme => ({
 
 export default function Registration() {
     const classes = useStyles();
-    const now = new Date();
     const [data, setData] = useState({
         firstName: '',
         lastName: '',
         gender: '',
-        dob: `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`,
+        dob: '',
         address1: '',
         address2: '',
         email: ''
@@ -53,23 +50,7 @@ export default function Registration() {
                     <TextField id="lastName" name="lastName" label="Last Name" fullWidth required value={data.lastName} onChange={handleChange}></TextField>
                 </Grid>
                 <Grid item xs={6} container>
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <KeyboardDatePicker
-                            disableToolbar
-                            variant="inline"
-                            format="MM/dd/yyyy"
-                            margin="normal"
-                            id="dob"
-                            name="dob"
-                            label="Date of Birth"
-                            value={data.dob}
-                            KeyboardButtonProps={{
-                                'aria-label': 'change date',
-                            }}
-                            onChange={date => setData({ ...data, 'dob': date })}
-                            fullWidth
-                        />
-                    </MuiPickersUtilsProvider>
+                    <TextField type="date" id="dob" name="dob" label="Date of Birth" fullWidth required value={data.dob} onChange={handleChange}></TextField>
                 </Grid>
                 <Grid item xs={6}>
                     <TextField
