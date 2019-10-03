@@ -50,7 +50,7 @@ export default function Registration() {
                     <TextField id="lastName" name="lastName" label="Last Name" fullWidth required value={data.lastName} onChange={handleChange}></TextField>
                 </Grid>
                 <Grid item xs={6} container>
-                    <TextField type="date" id="dob" name="dob" label="Date of Birth" fullWidth required value={data.dob} onChange={handleChange}></TextField>
+                    <TextField type="date" InputLabelProps={{ shrink: true }} id="dob" name="dob" label="Date of Birth" fullWidth required value={data.dob} onChange={handleChange}></TextField>
                 </Grid>
                 <Grid item xs={6}>
                     <TextField
@@ -62,15 +62,18 @@ export default function Registration() {
                         onChange={handleChange}
                         fullWidth
                         required
+                        SelectProps={{
+                            native: true
+                        }}
                     >
-                        <MenuItem key="" value="">
-                        </MenuItem>
-                        <MenuItem key="male" value="male">
+                        <option key="" value="">
+                        </option>
+                        <option key="male" value="male">
                             Male
-                        </MenuItem>
-                        <MenuItem key="female" value="female">
+                        </option>
+                        <option key="female" value="female">
                             Female
-                        </MenuItem>
+                        </option>
                     </TextField>
                 </Grid>
                 <Grid item sm={12}>
