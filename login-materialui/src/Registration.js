@@ -172,22 +172,40 @@ function AccountForm() {
 function ReviewForm() {
     const { data, setData } = React.useContext(RegistrationContext);
 
-    const handleChange = event => {
-        setData({
-            ...data,
-            [event.target.name]: event.target.value,
-        });
-        console.log(`Setting account info: ${event.target.name}=${event.target.value}.`)
-    };
+    const ReviewField = (props) => (
+        <Grid item xs={props.xs || 6}>
+            <TextField variant="outlined" type={props.type || 'text'} id={`${props.field}Review`} name={`${props.field}Review`} label={props.label} fullWidth={props.fullWidth || false} value={data[props.field] || ''} disabled />
+        </Grid>
+    );
+
+    const ReviewHeading = (props) => (
+        <Grid item xs={12} container justify="space-between">
+            <Grid item xs={6} container justify="flex-start">
+                <Typography variant="h6" component="h2">{props.children}</Typography>
+            </Grid>
+            <Grid item xs={6} container justify="flex-end">
+                <Button color="primary" variant="contained">Edit</Button>
+            </Grid>
+        </Grid>
+    );
 
     return (
-        <Grid container spacing={1} justify="space-between">
-            <Grid item xs={6}>
-                <TextField id="firstName" name="firstName" label="First Name" fullWidth required value={data.firstName} disabled></TextField>
-            </Grid>
-            <Grid item xs={6}>
-                <TextField id="lastName" name="lastName" label="Last Name" fullWidth required value={data.lastName} disabled></TextField>
-            </Grid>
+        <Grid container spacing={1} justify="flex-start">
+            <ReviewHeading>Personal Information</ReviewHeading>
+            <ReviewField field="firstName" label="First Name" fullWidth />
+            <ReviewField field="lastName" label="Last Name" fullWidth />
+            <ReviewField xs={4} field="gender" label="Gender" fullWidth />
+            <ReviewField xs={6} field="dob" label="Date of Birth" fullWidth />
+            <ReviewField xd={12} field="address1" label="Address 1" fullWidth />
+            <ReviewField xd={12} field="address2" label="Address 2" fullWidth />
+            <ReviewField xd={12} field="email" label="Email" fullWidth />
+            <ReviewHeading>Account Information</ReviewHeading>
+            <ReviewField field="username" label="User Name" fullWidth />
+            <ReviewField type="password" field="password2" label="Password" fullWidth />
+            <ReviewField xs={12} field="question1" label="Question 1" fullWidth />
+            <ReviewField xs={12} field="answer1" label="Answer 1" fullWidth />
+            <ReviewField xs={12} field="question1" label="Question 2" fullWidth />
+            <ReviewField xs={12} field="answer2" label="Answer 2" fullWidth />
         </Grid>
     );
 }
@@ -244,9 +262,7 @@ export default function Registration(props) {
                 <RegistrationContext.Provider value={{ data, setData }}>
                     {forms[step].form}
                 </RegistrationContext.Provider>
-                <p>firstName={data.firstName}</p>
-                <p>username={data.username}</p>
-                <Grid container spacing={2} item sm={12} justify="space-between">
+                <Grid container spacing={1} item sm={12} justify="space-between">
                     <Grid item sm={6} container justify="flex-start">
                         <Button color="secondary" variant="contained" onClick={handleStepChange(-1)}>Back</Button>
                     </Grid>
