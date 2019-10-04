@@ -1,6 +1,7 @@
 import { Avatar, Button, Checkbox, Container, FormControlLabel, Grid, Icon, Link, makeStyles, TextField, Typography } from '@material-ui/core';
 import { deepOrange } from '@material-ui/core/colors';
 import React from 'react';
+import { AppContext, Page } from './ContextConfiguration';
 
 const loginStyles = makeStyles(theme => ({
     paper: {
@@ -20,11 +21,24 @@ const loginStyles = makeStyles(theme => ({
     gridContainer: {
         justifyContent: "space-between",
         marginTop: theme.spacing(2)
+    },
+    link: {
+        '&:hover': {
+            textDecoration: 'underline',
+            cursor: 'pointer'
+        }
     }
 }));
 
 export default function () {
     const classes = loginStyles();
+
+    const { app, setApp } = React.useContext(AppContext);
+
+    const goToPageHandler = (pageName) => () => {
+        setApp({ ...app, page: pageName })
+    };
+
     return (
         <Container component="main" maxWidth="sm">
             <div className={classes.paper}>
@@ -39,17 +53,13 @@ export default function () {
                     <Button variant="contained" type="submit" color="primary" fullWidth>Sign in</Button>
                     <Grid container className={classes.gridContainer}>
                         <Grid item >
-                            <Typography>
-                                <Link href="http://localhost:3000" color="textSecondary" variant="body1">
-                                    Forgot Password?
-                                </Link>
+                            <Typography className={classes.link} color="textSecondary" variant="body1" onClick={goToPageHandler(Page.recoverAccount)}>
+                                Forgot Password?
                             </Typography>
                         </Grid>
                         <Grid item >
-                            <Typography>
-                                <Link href="http://localhost:3000" color="textPrimary" variant="body1">
-                                    Register for an account!
-                                </Link>
+                            <Typography className={classes.link} color="textPrimary" variant="body1" onClick={goToPageHandler(Page.registration)}>
+                                Register for an account!
                             </Typography>
                         </Grid>
                     </Grid>
