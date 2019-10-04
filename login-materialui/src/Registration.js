@@ -49,7 +49,6 @@ function PersonalForm() {
             ...data,
             [event.target.name]: event.target.value,
         });
-        console.log(`Setting personal info: ${event.target.name}=${event.target.value}.`)
     };
 
     return (
@@ -116,7 +115,6 @@ function AccountForm() {
             ...data,
             [event.target.name]: event.target.value,
         });
-        console.log(`Setting account info: ${event.target.name}=${event.target.value}.`)
     };
 
     return (
@@ -179,12 +177,12 @@ function ReviewForm() {
     );
 
     const ReviewHeading = (props) => (
-        <Grid item xs={12} container justify="space-between">
-            <Grid item xs={6} container justify="flex-start">
+        <Grid item xs={12} container justify="flex-start" spacing={2}>
+            <Grid item>
                 <Typography variant="h6" component="h2">{props.children}</Typography>
             </Grid>
-            <Grid item xs={6} container justify="flex-end">
-                <Button color="primary" variant="contained">Edit</Button>
+            <Grid item>
+                <Button color="secondary" variant="contained" size="small">Edit</Button>
             </Grid>
         </Grid>
     );
