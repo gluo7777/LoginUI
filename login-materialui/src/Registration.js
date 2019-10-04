@@ -243,6 +243,8 @@ export default function Registration(props) {
         const newStep = step + diff;
         if (newStep >= 0 && newStep < forms.length) {
             setStep(newStep);
+        } else if (newStep === forms.length) {
+            // @todo - submit account for creation
         }
     };
 
@@ -265,7 +267,7 @@ export default function Registration(props) {
                         <Button color="secondary" variant="contained" onClick={handleStepChange(-1)}>Back</Button>
                     </Grid>
                     <Grid item sm={6} container justify="flex-end">
-                        <Button color="primary" variant="contained" onClick={handleStepChange(1)}>NEXT</Button>
+                        <Button color="primary" variant="contained" onClick={handleStepChange(1)}>{step === forms.length - 1 ? "Finish" : "Next"}</Button>
                     </Grid>
                 </Grid>
             </Container>
