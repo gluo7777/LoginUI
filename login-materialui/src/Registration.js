@@ -2,6 +2,16 @@ import { Button, Checkbox, Container, FormControlLabel, Grid, makeStyles, TextFi
 import 'date-fns';
 import React, { useState } from 'react';
 
+const QUESTIONS = [
+    'In what county were you born?'
+    , 'What is your oldest cousin’s first name?'
+    , 'What is the title and artist of your favorite song?'
+    , 'What is your work address?'
+    , 'What is your oldest sibling’s middle name?'
+    , 'Would you date your cousin if you were not related?'
+    , 'What is your car’s license plate number?'
+];
+
 const RegistrationContext = React.createContext(null);
 
 const useStyles = makeStyles(theme => ({
@@ -97,6 +107,10 @@ function PersonalForm() {
 function AccountForm() {
     const { data, setData } = React.useContext(RegistrationContext);
 
+    const [inner, setInner] = React.useState({
+        firstPassSet: false
+    });
+
     const handleChange = event => {
         setData({
             ...data,
@@ -107,12 +121,45 @@ function AccountForm() {
 
     return (
         <Grid container spacing={1} justify="space-between">
-            <Grid item xs={6}>
-                <TextField id="username" name="username" label="Username" fullWidth required value={data.username} onChange={handleChange}></TextField>
+            <Grid item xs={8}>
+                <TextField id="username" name="username" label="Username" required value={data.username} onChange={handleChange}></TextField>
             </Grid>
             <Grid item xs={6}>
-                <TextField id="password" type="password" name="password" label="Password" fullWidth required value={data.password} onChange={handleChange}></TextField>
+                <TextField id="password1" type="password" name="password1" label="Password" fullWidth required value={data.password1}
+                    onChange={event => {
+                        let value = event.target.value;
+                        handleChange(event);
+                        setInner({ ...inner, firstPassSet: value && value !== '' })
+                    }}></TextField>
             </Grid>
+            <Grid item xs={6}>
+                <TextField id="password2" type="password" name="password2" label="Re-enter Password" fullWidth required value={data.password2} onChange={handleChange} disabled={!inner.firstPassSet}></TextField>
+            </Grid>
+            {[...Array(2).keys()].map(k => {
+                let key = k + 1;
+                return <React.Fragment key={k}>
+                    <Grid item xs={12}>
+                        <TextField
+                            select
+                            label={`Question ${key}`}
+                            id={`question${key}`}
+                            name={`question${key}`}
+                            value={data[`question${key}`]}
+                            onChange={handleChange}
+                            fullWidth
+                            required
+                            SelectProps={{
+                                native: true
+                            }}
+                        >
+                            {QUESTIONS.map(question => <option key={question}>{question}</option>)}
+                        </TextField>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField id={`answer${key}`} name={`answer${key}`} label={`Answer to Question ${key}`} fullWidth required value={data[`answer${key}`]} onChange={handleChange}></TextField>
+                    </Grid>
+                </React.Fragment>
+            })}
         </Grid>
     );
 }
@@ -145,6 +192,11 @@ function ReviewForm() {
     );
 }
 
+/**
+ * @todo
+ * - add validator for each form when next is clicked. can pass down click notifier to child form so they can do their own validation
+ * @param {props} props 
+ */
 export default function Registration(props) {
     const classes = useStyles();
     const [data, setData] = useState({
@@ -156,7 +208,12 @@ export default function Registration(props) {
         address2: '',
         email: '',
         username: '',
-        password: ''
+        password1: '',
+        password2: '',
+        question1: '',
+        question2: '',
+        answer1: '',
+        answer2: ''
     });
     const [step, setStep] = useState(0);
 
