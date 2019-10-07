@@ -183,7 +183,7 @@ function ReviewForm() {
                 <Typography variant="h6" component="h2">{props.children}</Typography>
             </Grid>
             <Grid item>
-                <Button color="secondary" variant="contained" size="small">Edit</Button>
+                <Button color="secondary" variant="contained" size="small" onClick={props.onClick}>Edit</Button>
             </Grid>
         </Grid>
     );
