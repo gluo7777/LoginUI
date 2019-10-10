@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "spring-react-session"
+		},
+		{
+			"path": "spring-react-session\\src\\main\\webapp\\WEB-INF\\view\\react"
+		}
+	]
+}

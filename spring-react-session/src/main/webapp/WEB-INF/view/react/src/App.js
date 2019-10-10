@@ -17,21 +17,33 @@ let theme = createMuiTheme({
 
 theme = responsiveFontSizes(theme, {});
 
+const query = new URLSearchParams(window.location.search);
+const loginSuccess = query ? query.has("success") : false;
+const loginError = query ? query.has("error") : false;
+
 function App() {
   const { defaultApp } = React.useContext(AppContext);
   const [app, setApp] = React.useState({ ...defaultApp });
 
+  setApp({ ...app, loginSuccess: app.loginSuccess || loginSuccess });
 
   const displayPage = () => {
-    switch (app.page) {
-      case 'login':
-        return <Login />;
-      case 'registration':
-        return <Registration />;
-      case 'home':
-        return <Home />;
-      default:
-        return;
+    if (loginSuccess) {
+      return <Home />;
+    }
+    else if (!app.loginSuccess || (app.page === 'home' && loginError)) {
+      return <Login />
+    } else {
+      switch (app.page) {
+        case 'login':
+          return <Login />;
+        case 'registration':
+          return <Registration />;
+        case 'home':
+          return <Home />;
+        default:
+          return;
+      }
     }
   };
 
