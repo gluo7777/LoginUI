@@ -13,9 +13,11 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/*.js", "/*.json", "/*.ico").addResourceLocations(REACT_BUILD + "/");
+        registry.addResourceHandler("/*.js", "/*.json", "/*.ico", "/*.png", "/.jpeg", "/*.gif")
+                .addResourceLocations(REACT_BUILD + "/");
         registry.addResourceHandler("/static/**").addResourceLocations(REACT_BUILD + "/static/");
         registry.addResourceHandler("/index.html").addResourceLocations(REACT_BUILD + "/index.html");
+        registry.addResourceHandler("/robots.txt").addResourceLocations(REACT_BUILD + "/robots.txt");
     }
 
 }
