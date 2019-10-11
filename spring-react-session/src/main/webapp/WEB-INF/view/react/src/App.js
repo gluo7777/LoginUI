@@ -25,7 +25,7 @@ function App() {
   const { defaultApp } = React.useContext(AppContext);
   const [app, setApp] = React.useState({ ...defaultApp });
 
-  setApp({ ...app, loginSuccess: app.loginSuccess || loginSuccess });
+  // setApp({ ...app, loginSuccess: app.loginSuccess || loginSuccess });
 
   const displayPage = () => {
     if (loginSuccess) {

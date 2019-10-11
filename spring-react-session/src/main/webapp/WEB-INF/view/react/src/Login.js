@@ -46,7 +46,7 @@ export default function () {
                     <Icon>lock</Icon>
                 </Avatar>
                 <Typography variant="h5" component="h1">Please sign in</Typography>
-                <form className={classes.form}>
+                <form className={classes.form} action="/login" method="POST">
                     <TextField variant="outlined" id="username" name="username" label="Username" margin="normal" required fullWidth />
                     <TextField variant="outlined" id="password" name="password" type="password" label="Password" margin="normal" required fullWidth />
                     <FormControlLabel value="rememberme" control={<Checkbox color="secondary" />} label="Remember Me" labelPlacement="end" margin="normal" />
