@@ -1,7 +1,6 @@
 import { Button, Checkbox, Container, FormControlLabel, Grid, makeStyles, TextField, Typography, Stepper, Step, StepLabel } from '@material-ui/core';
 import 'date-fns';
 import React, { useState } from 'react';
-import { AppContext } from './ContextConfiguration';
 
 const QUESTIONS = [
     'In what county were you born?'

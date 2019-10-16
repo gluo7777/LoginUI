@@ -2,11 +2,12 @@ import { createMuiTheme, CssBaseline, responsiveFontSizes } from '@material-ui/c
 import { lightBlue, orange } from '@material-ui/core/colors';
 import { ThemeProvider } from '@material-ui/styles';
 import React from 'react';
+import { BrowserRouter as Router, Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import 'typeface-roboto';
-import { AppContext } from './ContextConfiguration';
 import Login from './Login';
 import Registration from './Registration';
 import Home from './Home';
+import { GlobalApp, GlobalContext } from './Configuration';
 
 let theme = createMuiTheme({
   palette: {
@@ -17,46 +18,57 @@ let theme = createMuiTheme({
 
 theme = responsiveFontSizes(theme, {});
 
-const query = new URLSearchParams(window.location.search);
-const loginSuccess = query ? query.has("success") : false;
-const loginError = query ? query.has("error") : false;
+// const query = new URLSearchParams(window.location.search);
+// const loginSuccess = query ? query.has("success") : false;
+// const loginError = query ? query.has("error") : false;
 
-function App() {
-  const { defaultApp } = React.useContext(AppContext);
-  const [app, setApp] = React.useState({ ...defaultApp });
+const FROM_LOGIN = "/home";
 
-  // setApp({ ...app, loginSuccess: app.loginSuccess || loginSuccess });
-
-  const displayPage = () => {
-    if (loginSuccess) {
-      return <Home />;
-    }
-    else if (!app.loginSuccess || (app.page === 'home' && loginError)) {
-      return <Login />
-    } else {
-      switch (app.page) {
-        case 'login':
-          return <Login />;
-        case 'registration':
-          return <Registration />;
-        case 'home':
-          return <Home />;
-        default:
-          return;
-      }
-    }
-  };
+export function App() {
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AppContext.Provider value={{ app, setApp }}>
-        {displayPage()}
-      </AppContext.Provider>
-    </ThemeProvider>
+    <GlobalApp>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <Switch>
+            <RedirectLogin path="/home">
+              <Home />
+            </RedirectLogin>
+            <RedirectLogin path="/admin">
+              <Home />
+            </RedirectLogin>
+            <Route path="/login">
+              <Login redirectpath={FROM_LOGIN} />
+            </Route>
+            <Route path="/registration">
+              <Registration />
+            </Route>
+            <Route path="*">
+              <Redirect to={{
+                pathname: "/login"
+              }} />
+            </Route>
+          </Switch>
+        </Router>
+      </ThemeProvider>
+    </GlobalApp>
   );
 }
 
-
-
-export default App;
+function RedirectLogin({ children, ...rest }) {
+  const { app } = React.useContext(GlobalContext);
+  const location = useLocation();
+  return (
+    <Route {...rest}>
+      {
+        app.authenticated ?
+          children
+          : <Redirect to={{
+            pathname: "/login"
+            , state: { from: location }
+          }} />
+      }
+    </Route>
+  )
+}

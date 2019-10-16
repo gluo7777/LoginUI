@@ -1,7 +1,8 @@
 import { Avatar, Button, Checkbox, Container, FormControlLabel, Grid, Icon, Link, makeStyles, TextField, Typography } from '@material-ui/core';
 import { deepOrange } from '@material-ui/core/colors';
 import React from 'react';
-import { AppContext, Page } from './ContextConfiguration';
+import * as Configuration from './Configuration';
+import { useHistory, useLocation, Redirect } from 'react-router-dom'
 
 const loginStyles = makeStyles(theme => ({
     paper: {
@@ -30,41 +31,53 @@ const loginStyles = makeStyles(theme => ({
     }
 }));
 
-export default function () {
+export default function (props) {
     const classes = loginStyles();
+    const location = useLocation();
+    const history = useHistory();
+    const { from } = location.state || { from: { pathname: props.redirectpath } };
 
-    const { app, setApp } = React.useContext(AppContext);
+    const { app, setField } = React.useContext(Configuration.GlobalContext);
 
-    const goToPageHandler = (pageName) => () => {
-        setApp({ ...app, page: pageName })
-    };
+    const login = () => {
+        history.replace(from);
+        setField(Configuration.AUTHENTICATED, true)
+    }
 
-    return (
-        <Container component="main" maxWidth="sm">
-            <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
-                    <Icon>lock</Icon>
-                </Avatar>
-                <Typography variant="h5" component="h1">Please sign in</Typography>
-                <form className={classes.form} action="/login" method="POST">
-                    <TextField variant="outlined" id="username" name="username" label="Username" margin="normal" required fullWidth />
-                    <TextField variant="outlined" id="password" name="password" type="password" label="Password" margin="normal" required fullWidth />
-                    <FormControlLabel value="rememberme" control={<Checkbox color="secondary" />} label="Remember Me" labelPlacement="end" margin="normal" />
-                    <Button variant="contained" type="submit" color="primary" fullWidth>Sign in</Button>
-                    <Grid container className={classes.gridContainer}>
-                        <Grid item >
-                            <Typography className={classes.link} color="textSecondary" variant="body1" onClick={goToPageHandler(Page.recoverAccount)}>
-                                Forgot Password?
+    if (app.authenticated)
+        return (
+            <Redirect to={{
+                pathname: props.redirectpath,
+                state: { from: location }
+            }} />
+        )
+    else
+        return (
+            <Container component="main" maxWidth="sm">
+                <div className={classes.paper}>
+                    <Avatar className={classes.avatar}>
+                        <Icon>lock</Icon>
+                    </Avatar>
+                    <Typography variant="h5" component="h1">Please sign in</Typography>
+                    <form className={classes.form} action="/login" method="POST">
+                        <TextField variant="outlined" id="username" name="username" label="Username" margin="normal" required fullWidth />
+                        <TextField variant="outlined" id="password" name="password" type="password" label="Password" margin="normal" required fullWidth />
+                        <FormControlLabel value="rememberme" control={<Checkbox color="secondary" />} label="Remember Me" labelPlacement="end" margin="normal" />
+                        <Button variant="contained" type="submit" color="primary" fullWidth onClick={login}>Sign in</Button>
+                        <Grid container className={classes.gridContainer}>
+                            <Grid item >
+                                <Typography className={classes.link} color="textSecondary" variant="body1" >
+                                    Forgot Password?
                             </Typography>
-                        </Grid>
-                        <Grid item >
-                            <Typography className={classes.link} color="textPrimary" variant="body1" onClick={goToPageHandler(Page.registration)}>
-                                Register for an account!
+                            </Grid>
+                            <Grid item >
+                                <Typography className={classes.link} color="textPrimary" variant="body1" >
+                                    Register for an account!
                             </Typography>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </form>
-            </div>
-        </Container>
-    );
+                    </form>
+                </div>
+            </Container>
+        );
 };
