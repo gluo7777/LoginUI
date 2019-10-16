@@ -31,12 +31,11 @@ const loginStyles = makeStyles(theme => ({
     }
 }));
 
-export default function (props) {
+export default function Login(props) {
     const classes = loginStyles();
     const location = useLocation();
     const history = useHistory();
     const { from } = location.state || { from: { pathname: props.redirectpath } };
-
     const { app, setField } = React.useContext(Configuration.GlobalContext);
 
     const login = () => {
@@ -72,8 +71,8 @@ export default function (props) {
                             </Grid>
                             <Grid item >
                                 <Typography className={classes.link} color="textPrimary" variant="body1" >
-                                    Register for an account!
-                            </Typography>
+                                    <Link href="/registration">Register for an account!</Link>
+                                </Typography>
                             </Grid>
                         </Grid>
                     </form>

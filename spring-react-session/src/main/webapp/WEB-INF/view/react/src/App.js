@@ -1,12 +1,9 @@
 import { createMuiTheme, CssBaseline, responsiveFontSizes } from '@material-ui/core';
 import { lightBlue, orange } from '@material-ui/core/colors';
 import { ThemeProvider } from '@material-ui/styles';
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import 'typeface-roboto';
-import Login from './Login';
-import Registration from './Registration';
-import Home from './Home';
 import { GlobalApp, GlobalContext } from './Configuration';
 
 let theme = createMuiTheme({
@@ -22,38 +19,51 @@ theme = responsiveFontSizes(theme, {});
 // const loginSuccess = query ? query.has("success") : false;
 // const loginError = query ? query.has("error") : false;
 
-const FROM_LOGIN = "/home";
+
+const Login = lazy(() => import('./Login'));
+const Registration = lazy(() => import('./Registration'));
+const Home = lazy(() => import('./Home'));
 
 export function App() {
-
   return (
     <GlobalApp>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Router>
-          <Switch>
-            <RedirectLogin path="/home">
-              <Home />
-            </RedirectLogin>
-            <RedirectLogin path="/admin">
-              <Home />
-            </RedirectLogin>
-            <Route path="/login">
-              <Login redirectpath={FROM_LOGIN} />
-            </Route>
-            <Route path="/registration">
-              <Registration />
-            </Route>
-            <Route path="*">
-              <Redirect to={{
-                pathname: "/login"
-              }} />
-            </Route>
-          </Switch>
+          <Suspense fallback={<Loading />}>
+            <Switch>
+              <RedirectLogin path="/home">
+                <Home />
+              </RedirectLogin>
+              <RedirectLogin path="/admin">
+                <Home />
+              </RedirectLogin>
+              <Route path="/login">
+                <Login redirectpath="/home" />
+              </Route>
+              <Route path="/registration">
+                <Registration />
+              </Route>
+              <Route path="*">
+                <Redirect to={{
+                  pathname: "/login"
+                }} />
+              </Route>
+            </Switch>
+          </Suspense>
         </Router>
       </ThemeProvider>
     </GlobalApp>
   );
+}
+
+function Loading() {
+  return (
+    <div>
+      <h1>Loading...</h1>
+      <h5>Placeholder for loading screen...</h5>
+    </div>
+  )
 }
 
 function RedirectLogin({ children, ...rest }) {
