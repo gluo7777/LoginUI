@@ -1,10 +1,10 @@
 import { createMuiTheme, CssBaseline, responsiveFontSizes } from '@material-ui/core';
 import { lightBlue, orange } from '@material-ui/core/colors';
 import { ThemeProvider } from '@material-ui/styles';
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useContext } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import 'typeface-roboto';
-import { GlobalApp, GlobalContext } from './Configuration';
+import * as Configuration from './Configuration';
 
 let theme = createMuiTheme({
   palette: {
@@ -19,14 +19,13 @@ theme = responsiveFontSizes(theme, {});
 // const loginSuccess = query ? query.has("success") : false;
 // const loginError = query ? query.has("error") : false;
 
-
 const Login = lazy(() => import('./Login'));
 const Registration = lazy(() => import('./Registration'));
 const Home = lazy(() => import('./Home'));
 
 export function App() {
   return (
-    <GlobalApp>
+    <Configuration.GlobalApp>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Router>
@@ -53,7 +52,7 @@ export function App() {
           </Suspense>
         </Router>
       </ThemeProvider>
-    </GlobalApp>
+    </Configuration.GlobalApp>
   );
 }
 
@@ -67,7 +66,7 @@ function Loading() {
 }
 
 function RedirectLogin({ children, ...rest }) {
-  const { app } = React.useContext(GlobalContext);
+  const { app } = React.useContext(Configuration.GlobalContext);
   const location = useLocation();
   return (
     <Route {...rest}>
