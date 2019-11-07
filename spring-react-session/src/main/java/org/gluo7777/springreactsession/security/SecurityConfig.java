@@ -38,15 +38,17 @@ import java.util.Collection;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String[] GET_WHITELIST = {"/", "/index.html", "/static/**", "/*.js", "/*.json", "/*.ico", "/preview/login-page", "/in-secure/**"};
+    private static final String[] GET_WHITELIST = {"/", "/index.html", "/static/**", "/*.js", "/*.json", "/*.ico", "/preview/login-page"};
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().configurationSource(corsConfigurationSource())
                 .and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.GET, GET_WHITELIST).permitAll()
                 .and().authorizeRequests().antMatchers(HttpMethod.POST, "/api/login").permitAll()
+                .and().authorizeRequests().antMatchers("/api/logout").authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint())
             .and().authorizeRequests().antMatchers("/secure/**").hasRole("USER")
+                .and().authorizeRequests().anyRequest().authenticated()
             .and().formLogin()
                 .loginProcessingUrl("/api/login")
                 .successHandler(restSavedRequestAwareAuthenticationSuccessHandler())
@@ -54,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and().logout().logoutUrl("/api/logout")
                 .logoutSuccessHandler((request, response, authentication) -> {
                     if (response.isCommitted()) return;
-                    else if (authentication.isAuthenticated()) response.setStatus(HttpServletResponse.SC_OK);
+                    else if (authentication != null && authentication.isAuthenticated()) response.setStatus(HttpServletResponse.SC_OK);
                     else response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 })
                 .invalidateHttpSession(true)
@@ -78,7 +80,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         || (targetUrlParameter != null && StringUtils.hasText(request
                         .getParameter(targetUrlParameter)))) {
                     requestCache.removeRequest(request, response);
-                    super.onAuthenticationSuccess(request, response, authentication);
+                    clearAuthenticationAttributes(request);
                     return;
                 }
                 clearAuthenticationAttributes(request);
@@ -99,12 +101,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://frontend.login.com:3000"));
-        configuration.setAllowedMethods(Arrays.asList("GET"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","DELETE","PUT"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(Arrays.asList("Set-Cookie"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/in-secure/**", configuration);
-        source.registerCorsConfiguration("/secure/**", configuration);
+        source.registerCorsConfiguration("/api/**", configuration);
         return source;
     }
 
