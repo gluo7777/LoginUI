@@ -18,7 +18,7 @@ public class InsecureAPIController {
     @GetMapping("/bypass/login")
     public String bypass(HttpServletRequest httpServletRequest) {
         // set authentication directly
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken("dummy1", "dummy1", Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken("user1", "user1Pass", Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return "successfully bypassed login!";
     }

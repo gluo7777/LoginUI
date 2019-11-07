@@ -7,13 +7,30 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
+import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -21,55 +38,90 @@ import java.util.Collection;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String[] GET_WHITELIST = { "/", "/index.html", "/static/**", "/*.js", "/*.json", "/*.ico", "/preview/login-page", "/in-secure/**" };
-
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http.csrf().disable().authorizeRequests().antMatchers(HttpMethod.GET, GET_WHITELIST).permitAll().anyRequest()
-//                .authenticated().and().formLogin().loginPage("/index.html")
-//                .defaultSuccessUrl("/index.html?success", true).loginProcessingUrl("/login")
-//                .failureUrl("/index.html?error").and().logout().logoutUrl("/logout").deleteCookies("JESSIONID");
-//    }
-//
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.inMemoryAuthentication().withUser("user1").password("{noop}user1Pass").roles("USER").and()
-//                .withUser("user2").password("{noop}user2Pass").roles("USER").and().withUser("admin")
-//                .password("{noop}admin0Pass").roles("ADMIN");
-//    }
-
-    private static final String LOGIN_PAGE = "/preview/login-page";
+    private static final String[] GET_WHITELIST = {"/", "/index.html", "/static/**", "/*.js", "/*.json", "/*.ico", "/preview/login-page", "/in-secure/**"};
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.GET, GET_WHITELIST).permitAll().anyRequest()
-                .authenticated().and().formLogin().loginPage(LOGIN_PAGE)
-                .defaultSuccessUrl(LOGIN_PAGE + "?success", true).loginProcessingUrl("/login")
-                .failureUrl(LOGIN_PAGE + "?error").and().logout().logoutUrl("/logout").deleteCookies("JESSIONID").and().userDetailsService(userDetailsService());
-
+        http.cors().configurationSource(corsConfigurationSource())
+                .and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.GET, GET_WHITELIST).permitAll()
+                .and().authorizeRequests().antMatchers(HttpMethod.POST, "/api/login").permitAll()
+                .and().exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint())
+            .and().authorizeRequests().antMatchers("/secure/**").hasRole("USER")
+            .and().formLogin()
+                .loginProcessingUrl("/api/login")
+                .successHandler(restSavedRequestAwareAuthenticationSuccessHandler())
+                .failureHandler(new SimpleUrlAuthenticationFailureHandler())
+            .and().logout().logoutUrl("/api/logout")
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    if (response.isCommitted()) return;
+                    else if (authentication.isAuthenticated()) response.setStatus(HttpServletResponse.SC_OK);
+                    else response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                })
+                .invalidateHttpSession(true)
+        ;
 
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource(){
+    AuthenticationSuccessHandler restSavedRequestAwareAuthenticationSuccessHandler(){
+        return new SavedRequestAwareAuthenticationSuccessHandler(){
+            private RequestCache requestCache = new HttpSessionRequestCache();
+            @Override
+            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
+                SavedRequest savedRequest = requestCache.getRequest(request, response);
+                if (savedRequest == null) {
+                    clearAuthenticationAttributes(request);
+                    return;
+                }
+                String targetUrlParameter = getTargetUrlParameter();
+                if (isAlwaysUseDefaultTargetUrl()
+                        || (targetUrlParameter != null && StringUtils.hasText(request
+                        .getParameter(targetUrlParameter)))) {
+                    requestCache.removeRequest(request, response);
+                    super.onAuthenticationSuccess(request, response, authentication);
+                    return;
+                }
+                clearAuthenticationAttributes(request);
+            }
+        };
+    }
+
+
+    // override default redirect to login page
+    @Bean
+    AuthenticationEntryPoint restAuthenticationEntryPoint() {
+        return (request, response, authException) -> {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        };
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://frontend.login.com:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/in-secure/**", configuration);
+        source.registerCorsConfiguration("/secure/**", configuration);
         return source;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("user1").password("{noop}user1Pass").roles("USER").and()
-                .withUser("user2").password("{noop}user2Pass").roles("USER").and().withUser("admin")
-                .password("{noop}admin0Pass").roles("ADMIN");
+        auth.inMemoryAuthentication().withUser("user1").password(encoder().encode("user1Pass")).roles("USER").and()
+                .withUser("user2").password(encoder().encode("user2Pass")).roles("USER").and().withUser("admin")
+                .password(encoder().encode("admin0Pass")).roles("ADMIN");
     }
 
     @Bean
-    public UserDetailsService userDetailsService(){
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService() {
         return username -> new UserDetails() {
             @Override
             public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -83,7 +135,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             @Override
             public String getPassword() {
-                return "{noop}user1Pass";
+                return encoder().encode("user1Pass");
             }
 
             @Override
