@@ -15,10 +15,6 @@ let theme = createMuiTheme({
 
 theme = responsiveFontSizes(theme, {});
 
-// const query = new URLSearchParams(window.location.search);
-// const loginSuccess = query ? query.has("success") : false;
-// const loginError = query ? query.has("error") : false;
-
 const Login = lazy(() => import('./Login'));
 const Registration = lazy(() => import('./Registration'));
 const Home = lazy(() => import('./Home'));

@@ -1,2 +1,17 @@
 server:
-    port: 9090
+  port: 9090
+  servlet:
+    session:
+      cookie:
+        comment: cookies are tasty
+        domain: login.com
+        http-only: true
+        max-age: 15m
+        name: SOMEDUMBID
+        timeout: 15m
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

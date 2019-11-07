@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Preview Login Page</title>
+</head>
+<body>
+    <form action="/login" method="post" id="login-form">
+        <label for="username">Username:</label><input type="text" name="username" id="username"><br>
+        <label for="password">Password:</label><input type="password" name="password" id="password"><br>
+        <input type="submit" value="Login">
+    </form>
+    <div id="success-message" style="display: none">
+        <h1>Success!</h1>
+        <button onclick="logout()">Logout</button>
+    </div>
+    <div id="logout-message" style="display: none">
+        <h1>You've logged out!</h1>
+    </div>
+<script>
+    const loginForm = document.querySelector("#login-form");
+    const successMsg = document.querySelector("#success-message");
+    const logoutMsg = document.querySelector("#logout-message");
+
+    const query = new URLSearchParams(window.location.search);
+
+    if(query.has("success")){
+        loginForm.style = "display:none";
+        successMsg.style = "display:box";
+        fetch("http://backend.login.com:9090/secure/user").then(res => res.json()).then(json => console.log(json))
+    }
+
+    if(query.has("logout")){
+        logoutMsg.style = "display:box";
+    }
+
+    function logout(){
+        console.log("logging out");
+        fetch("/logout");
+    }
+</script>
+</body>
+</html>
