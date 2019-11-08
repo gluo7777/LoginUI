@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Use Docker to persist data in a Postgressql DB
 ## https://medium.com/@rrfd/setting-up-docker-postgresql-connecting-locally-using-advanced-functions-d8fe3bd58de6
 
@@ -25,5 +27,5 @@ docker run --name "$PSQL_CONTAINER_LOCAL" -p 5432:5432 -e POSTGRES_PASSWORD=pass
 docker exec -it "$PSQL_CONTAINER_LOCAL" psql -U postgres
 
 # Restart for quick test
-docker stop $PSQL_CONTAINER_LOCAL
-docker rm -v $PSQL_CONTAINER_LOCAL
+# docker stop $PSQL_CONTAINER_LOCAL
+# docker rm -v $PSQL_CONTAINER_LOCAL
