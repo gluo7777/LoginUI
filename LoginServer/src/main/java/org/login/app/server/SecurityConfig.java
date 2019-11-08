@@ -50,7 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().configurationSource(corsConfigurationSource())
                 .and().csrf().disable()
                 .authorizeRequests().antMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
-                .and().authorizeRequests().antMatchers(LOGOUT_URL).authenticated()
+                .and().augit sthorizeRequests().antMatchers(LOGOUT_URL).authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint())
             .and().authorizeRequests().antMatchers(API + "/**").hasRole(API_ROLE)
                 .and().authorizeRequests().anyRequest().authenticated()
