@@ -1,4 +1,4 @@
-package org.gluo7777.springreactsession;
+package org.login.app.server;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class SpringReactSessionApplicationTests {
+public class LoginServerAppTests {
 
 	@Test
 	public void contextLoads() {

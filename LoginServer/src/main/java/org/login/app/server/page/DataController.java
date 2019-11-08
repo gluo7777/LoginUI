@@ -1,4 +1,4 @@
-package org.gluo7777.springreactsession.page;
+package org.login.app.server.page;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;

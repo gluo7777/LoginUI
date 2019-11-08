@@ -1,4 +1,4 @@
-package org.gluo7777.springreactsession.security;
+package org.login.app.server.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

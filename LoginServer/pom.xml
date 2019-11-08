@@ -9,10 +9,10 @@
 		<relativePath/>
 		<!-- lookup parent from repository -->
 	</parent>
-	<groupId>org.gluo7777</groupId>
-	<artifactId>spring-react-session</artifactId>
+	<groupId>org.login.app</groupId>
+	<artifactId>server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>spring-react-session</name>
+	<name>Login Server</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>

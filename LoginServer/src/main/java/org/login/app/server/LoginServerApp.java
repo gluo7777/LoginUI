@@ -1,13 +1,13 @@
-package org.gluo7777.springreactsession;
+package org.login.app.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringReactSessionApplication {
+public class LoginServerApp {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringReactSessionApplication.class, args);
+		SpringApplication.run(LoginServerApp.class, args);
 	}
 
 }
