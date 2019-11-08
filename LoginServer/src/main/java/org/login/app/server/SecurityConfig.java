@@ -1,5 +1,6 @@
-package org.login.app.server.security;
+package org.login.app.server;
 
+import org.login.app.server.security.RestAuthenticationSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -38,22 +39,26 @@ import java.util.Collection;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String[] GET_WHITELIST = {"/", "/index.html", "/static/**", "/*.js", "/*.json", "/*.ico", "/preview/login-page"};
+    public static final String APP = "/app";
+    public static final String API = "/api";
+    public static final String LOGIN_URL = APP + "/login";
+    public static final String LOGOUT_URL = APP + "/logout";
+    public static final String API_ROLE = "USER";
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().configurationSource(corsConfigurationSource())
-                .and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.GET, GET_WHITELIST).permitAll()
-                .and().authorizeRequests().antMatchers(HttpMethod.POST, "/api/login").permitAll()
-                .and().authorizeRequests().antMatchers("/api/logout").authenticated()
+                .and().csrf().disable()
+                .authorizeRequests().antMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
+                .and().authorizeRequests().antMatchers(LOGOUT_URL).authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint())
-            .and().authorizeRequests().antMatchers("/secure/**").hasRole("USER")
+            .and().authorizeRequests().antMatchers(API + "/**").hasRole(API_ROLE)
                 .and().authorizeRequests().anyRequest().authenticated()
             .and().formLogin()
-                .loginProcessingUrl("/api/login")
+                .loginProcessingUrl(LOGIN_URL)
                 .successHandler(restSavedRequestAwareAuthenticationSuccessHandler())
                 .failureHandler(new SimpleUrlAuthenticationFailureHandler())
-            .and().logout().logoutUrl("/api/logout")
+            .and().logout().logoutUrl(LOGOUT_URL)
                 .logoutSuccessHandler((request, response, authentication) -> {
                     if (response.isCommitted()) return;
                     else if (authentication != null && authentication.isAuthenticated()) response.setStatus(HttpServletResponse.SC_OK);
@@ -61,31 +66,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 })
                 .invalidateHttpSession(true)
         ;
-
     }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication().withUser("user1").password(encoder().encode("user1Pass")).roles("USER").and()
+                .withUser("user2").password(encoder().encode("user2Pass")).roles("USER").and().withUser("admin")
+                .password(encoder().encode("admin0Pass")).roles("ADMIN");
+    }
+
 
     @Bean
     AuthenticationSuccessHandler restSavedRequestAwareAuthenticationSuccessHandler(){
-        return new SavedRequestAwareAuthenticationSuccessHandler(){
-            private RequestCache requestCache = new HttpSessionRequestCache();
-            @Override
-            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-                SavedRequest savedRequest = requestCache.getRequest(request, response);
-                if (savedRequest == null) {
-                    clearAuthenticationAttributes(request);
-                    return;
-                }
-                String targetUrlParameter = getTargetUrlParameter();
-                if (isAlwaysUseDefaultTargetUrl()
-                        || (targetUrlParameter != null && StringUtils.hasText(request
-                        .getParameter(targetUrlParameter)))) {
-                    requestCache.removeRequest(request, response);
-                    clearAuthenticationAttributes(request);
-                    return;
-                }
-                clearAuthenticationAttributes(request);
-            }
-        };
+        return new RestAuthenticationSuccessHandler();
     }
 
 
@@ -106,64 +99,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList("Set-Cookie"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", configuration);
+        source.registerCorsConfiguration(API + "/**", configuration);
+        source.registerCorsConfiguration(APP + "/**", configuration);
         return source;
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("user1").password(encoder().encode("user1Pass")).roles("USER").and()
-                .withUser("user2").password(encoder().encode("user2Pass")).roles("USER").and().withUser("admin")
-                .password(encoder().encode("admin0Pass")).roles("ADMIN");
-    }
-
     @Bean
-    public PasswordEncoder encoder() {
+    PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> new UserDetails() {
-            @Override
-            public Collection<? extends GrantedAuthority> getAuthorities() {
-                return Arrays.asList(new GrantedAuthority() {
-                    @Override
-                    public String getAuthority() {
-                        return "USER";
-                    }
-                });
-            }
-
-            @Override
-            public String getPassword() {
-                return encoder().encode("user1Pass");
-            }
-
-            @Override
-            public String getUsername() {
-                return username + "-fake";
-            }
-
-            @Override
-            public boolean isAccountNonExpired() {
-                return true;
-            }
-
-            @Override
-            public boolean isAccountNonLocked() {
-                return true;
-            }
-
-            @Override
-            public boolean isCredentialsNonExpired() {
-                return true;
-            }
-
-            @Override
-            public boolean isEnabled() {
-                return true;
-            }
-        };
     }
 }
