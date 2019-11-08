@@ -9,11 +9,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 
 import java.time.LocalDate;
 import java.util.LinkedList;
 
 @SpringBootApplication
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class LoginServerApp {
 
 	public static void main(String[] args) {
@@ -34,14 +36,14 @@ public class LoginServerApp {
 
             accountRepository.save(account1);
 
-            SecurityQuestion securityQuestion1 = new SecurityQuestion();
-            securityQuestion1.setQuestion("What is your first pet's name?");
-            securityQuestion1.setAnswer("My Ass");
-            securityQuestion1.setAccountId(account1.getId());
-
-            securityQuestionRepository.save(securityQuestion1);
-
-			System.out.println(account1);
+//            SecurityQuestion securityQuestion1 = new SecurityQuestion();
+//            securityQuestion1.setQuestion("What is your first pet's name?");
+//            securityQuestion1.setAnswer("My Ass");
+//            securityQuestion1.setAccountId(account1.getId());
+//
+//            securityQuestionRepository.save(securityQuestion1);
+//
+//			System.out.println(account1);
 		};
 	}
 }
