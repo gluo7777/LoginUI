@@ -1,6 +1,7 @@
 package org.login.app.server;
 
 import org.login.app.server.account.*;
+import org.login.app.server.security.Roles;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

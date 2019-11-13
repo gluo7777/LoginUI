@@ -15,6 +15,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public void exception(Exception e){
-        LOG.error("Error", e);
+        LOG.error("Error: {}", e.toString());
+        LOG.error("StackTrace:", e);
     }
 }
