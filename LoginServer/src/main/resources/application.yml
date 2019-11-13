@@ -7,14 +7,29 @@ server:
         domain: login.com
         http-only: true
         max-age: 15m
-        name: LOGINCOMID
+        name: LOGINAPPID
         timeout: 15m
+
+spring:
+  data:
+    rest:
+      base-path: /api
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/loginapp
+    username: postgres
+    password: postgres
+#  jpa:
+#    properties:
+#      hibernate:
+#        jdbc:
+#          lob:
+#            non_contextual_creation: true
 
 logging:
   level:
     org:
-      springframework:
-        security: DEBUG
+      springframework: DEBUG
 
 error:
   whitelabel:

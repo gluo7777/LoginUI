@@ -1,21 +1,21 @@
 package org.login.app.server.account;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
-import java.util.List;
 
 @Getter
 @Setter
 @Entity
+@Table(name = "users", schema = "security")
+@JsonIgnoreProperties(allowGetters = false, allowSetters = true, value = {"password","enabled"})
 public class Account {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @NotBlank
     private String firstName;
@@ -28,7 +28,5 @@ public class Account {
     private String username;
     @NotBlank
     private String password;
-    @OneToMany(mappedBy = "accountId")
-    @Valid
-    private List<SecurityQuestion> securityQuestions;
+    private boolean enabled;
 }

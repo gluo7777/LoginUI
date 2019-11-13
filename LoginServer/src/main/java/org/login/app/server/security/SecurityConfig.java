@@ -1,5 +1,6 @@
 package org.login.app.server.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import java.util.Arrays;
 
 @ConditionalOnMissingBean(LocalSecurityConfig.class)
@@ -54,30 +56,33 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         ;
     }
 
+    @Autowired
+    private DataSource dataSource;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("user1").password(encoder().encode("user1Pass")).roles("USER").and()
-                .withUser("user2").password(encoder().encode("user2Pass")).roles("USER").and().withUser("admin")
-                .password(encoder().encode("admin0Pass")).roles("ADMIN");
+        auth.jdbcAuthentication().dataSource(dataSource)
+            .usersByUsernameQuery("SELECT username,password,enabled FROM security.users WHERE username = ?")
+            .authoritiesByUsernameQuery("SELECT authority FROM security.users a JOIN security.authorities b ON a.id = b.user_id AND a.username = ?");
     }
 
 
     @Bean
-    AuthenticationSuccessHandler restSavedRequestAwareAuthenticationSuccessHandler(){
+    public AuthenticationSuccessHandler restSavedRequestAwareAuthenticationSuccessHandler(){
         return new RestAuthenticationSuccessHandler();
     }
 
 
     // override default redirect to login page
     @Bean
-    AuthenticationEntryPoint restAuthenticationEntryPoint() {
+    public AuthenticationEntryPoint restAuthenticationEntryPoint() {
         return (request, response, authException) -> {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
         };
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://frontend.login.com:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST","DELETE","PUT"));
@@ -91,7 +96,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    PasswordEncoder encoder() {
+    public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
 }

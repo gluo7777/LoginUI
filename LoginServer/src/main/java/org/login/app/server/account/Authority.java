@@ -10,18 +10,13 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @Entity
-@Table(name = "questions", schema = "security")
-public class SecurityQuestion {
+@Table(name = "authorities", schema = "security")
+public class Authority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @NotBlank
-    private String question;
-    @NotBlank
-    private String answer;
-    private String hint;
-    private boolean caseSensitive = false;
-    private boolean ignoreSpaces = true;
+    private String authority;
     @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
