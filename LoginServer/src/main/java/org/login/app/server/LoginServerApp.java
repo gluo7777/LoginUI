@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
-import java.util.LinkedList;
 
 @SpringBootApplication
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -22,20 +21,20 @@ public class LoginServerApp {
 
 	@Profile("dummy")
 	@Bean
-	public ApplicationRunner smokeTest(AccountRepository accountRepository, SecurityQuestionRepository securityQuestionRepository, AuthorityRepository authorityRepository, PasswordEncoder encoder){
+	public ApplicationRunner smokeTest(UserRepository userRepository, SecurityQuestionRepository securityQuestionRepository, AuthorityRepository authorityRepository, PasswordEncoder encoder){
 		return args -> {
-			Account account1 = new Account();
-			account1.setFirstName("William");
-            account1.setLastName("Luo");
-            account1.setEmail("gluo7777@gmail.com");
-            account1.setUsername("williamluo7777");
-            account1.setPassword(encoder.encode("abc123"));
-            account1.setDateOfBirth(LocalDate.of(1999,9,19));
+			User user1 = new User();
+			user1.setFirstName("William");
+            user1.setLastName("Luo");
+            user1.setEmail("gluo7777@gmail.com");
+            user1.setUsername("williamluo7777");
+            user1.setPassword(encoder.encode("abc123"));
+            user1.setDateOfBirth(LocalDate.of(1999,9,19));
 
-            accountRepository.save(account1);
+            userRepository.save(user1);
 
 			Authority authority1 = new Authority();
-			authority1.setAccount(account1);
+			authority1.setUser(user1);
 			authority1.setAuthority(Roles.ADMIN.name());
 
 			authorityRepository.save(authority1);
@@ -43,7 +42,7 @@ public class LoginServerApp {
             SecurityQuestion securityQuestion1 = new SecurityQuestion();
             securityQuestion1.setQuestion("What is your first pet's name?");
             securityQuestion1.setAnswer("My Ass");
-            securityQuestion1.setAccount(account1);
+            securityQuestion1.setUser(user1);
 
             securityQuestionRepository.save(securityQuestion1);
 

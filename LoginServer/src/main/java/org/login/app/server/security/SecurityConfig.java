@@ -63,15 +63,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication().dataSource(dataSource)
             .usersByUsernameQuery("SELECT username,password,enabled FROM security.users WHERE username = ?")
-            .authoritiesByUsernameQuery("SELECT authority FROM security.users a JOIN security.authorities b ON a.id = b.user_id AND a.username = ?");
+            .authoritiesByUsernameQuery("SELECT username,authority FROM security.users a JOIN security.authorities b ON a.id = b.user_id AND a.username = ?");
     }
-
 
     @Bean
     public AuthenticationSuccessHandler restSavedRequestAwareAuthenticationSuccessHandler(){
         return new RestAuthenticationSuccessHandler();
     }
-
 
     // override default redirect to login page
     @Bean

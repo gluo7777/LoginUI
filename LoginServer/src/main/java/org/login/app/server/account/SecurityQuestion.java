@@ -25,5 +25,5 @@ public class SecurityQuestion {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private Account account;
+    private User user;
 }

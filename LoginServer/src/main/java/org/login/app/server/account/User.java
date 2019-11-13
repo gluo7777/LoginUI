@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "users", schema = "security")
 @JsonIgnoreProperties(allowGetters = false, allowSetters = true, value = {"password","enabled"})
-public class Account {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
