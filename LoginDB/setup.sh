@@ -9,6 +9,7 @@ PSQL_IMAGE="postgres:11.5-alpine"
 PSQL_CONTAINER="postgres11.5-database"
 PSQL_CONTAINER_LOCAL="local-$PSQL_CONTAINER"
 PSQL_DIR="/var/lib/postgresql/data"
+PSQL_PASS=postgres
 
 # Pull Image
 ## Alpine is smaller in size ~ 5mb
@@ -21,7 +22,7 @@ docker container ls -a | grep "$PSQL_CONTAINER"
 
 # Configure Database
 ## Mount volume from container
-docker run --name "$PSQL_CONTAINER_LOCAL" -p 5432:5432 -e POSTGRES_PASSWORD=password -d --volumes-from $PSQL_CONTAINER $PSQL_IMAGE
+docker run --name "$PSQL_CONTAINER_LOCAL" -p 5432:5432 -e POSTGRES_PASSWORD=$PSQL_PASS -d --volumes-from $PSQL_CONTAINER $PSQL_IMAGE
 
 # Launch psql within running container
 docker exec -it "$PSQL_CONTAINER_LOCAL" psql -U postgres

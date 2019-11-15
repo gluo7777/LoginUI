@@ -1,11 +1,12 @@
 package org.login.app.server.account;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -22,7 +23,7 @@ public class SecurityQuestion {
     private String hint;
     private boolean caseSensitive = false;
     private boolean ignoreSpaces = true;
-    @NotNull
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;

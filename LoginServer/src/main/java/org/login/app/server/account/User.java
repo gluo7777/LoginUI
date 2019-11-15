@@ -1,18 +1,26 @@
 package org.login.app.server.account;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "users", schema = "security")
-@JsonIgnoreProperties(allowGetters = false, allowSetters = true, value = {"password","enabled"})
+@JsonIgnoreProperties(allowGetters = false, allowSetters = true, value = {"password","enabled"}, ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +30,7 @@ public class User {
     @NotBlank
     private String lastName;
     @NotBlank
+    @Email
     private String email;
     private LocalDate dateOfBirth;
     @NotBlank
@@ -29,4 +38,9 @@ public class User {
     @NotBlank
     private String password;
     private boolean enabled;
+    @JsonManagedReference
+    @NotEmpty
+    @Valid
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private List<SecurityQuestion> securityQuestions;
 }

@@ -5,10 +5,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.intercept.RunAsImplAuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -22,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.util.Arrays;
 
-@ConditionalOnMissingBean(LocalSecurityConfig.class)
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -33,11 +35,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public static final String LOGOUT_URL = APP + "/logout";
     public static final String API_ROLE = "USER";
 
+    public static final String[] POST_WHITE_LIST = {API + "/registration", LOGIN_URL};
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().configurationSource(corsConfigurationSource())
                 .and().csrf().disable()
-                .authorizeRequests().antMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
+                .authorizeRequests().antMatchers(HttpMethod.POST, POST_WHITE_LIST).permitAll()
                 .and().authorizeRequests().antMatchers(LOGOUT_URL).authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint())
             .and().authorizeRequests().antMatchers(API + "/**").hasRole(API_ROLE)
@@ -56,6 +60,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         ;
     }
 
+    @Bean
+    @Override
+    public UserDetailsService userDetailsServiceBean() throws Exception {
+        return super.userDetailsServiceBean();
+    }
+
     @Autowired
     private DataSource dataSource;
 
@@ -63,7 +73,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication().dataSource(dataSource)
             .usersByUsernameQuery("SELECT username,password,enabled FROM security.users WHERE username = ?")
-            .authoritiesByUsernameQuery("SELECT username,authority FROM security.users a JOIN security.authorities b ON a.id = b.user_id AND a.username = ?");
+            .authoritiesByUsernameQuery("SELECT username,authority FROM security.users a JOIN security.authorities b ON a.id = b.user_id AND a.username = ?")
+        .and().authenticationProvider(runAsAuthenticationProvider());
+    }
+
+    @Bean
+    public AuthenticationProvider runAsAuthenticationProvider(){
+        RunAsImplAuthenticationProvider authenticationProvider = new RunAsImplAuthenticationProvider();
+        authenticationProvider.setKey(MethodSecurityConfig.SUPER_USER);
+        return authenticationProvider;
     }
 
     @Bean
