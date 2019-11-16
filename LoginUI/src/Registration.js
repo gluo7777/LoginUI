@@ -3,7 +3,8 @@ import 'date-fns';
 import React, { useState } from 'react';
 
 const QUESTIONS = [
-    'In what county were you born?'
+    ''
+    , 'In what county were you born?'
     , 'What is your oldest cousin’s first name?'
     , 'What is the title and artist of your favorite song?'
     , 'What is your work address?'
@@ -12,7 +13,43 @@ const QUESTIONS = [
     , 'What is your car’s license plate number?'
 ];
 
+const STATES = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];
+
 const RegistrationContext = React.createContext(null);
+
+function RegistrationApp(props) {
+    const [data, setData] = useState({
+        firstName: '',
+        lastName: '',
+        gender: '',
+        dob: '',
+        address1: '',
+        address2: '',
+        apt: '',
+        city: '',
+        state: '',
+        zipcode: '',
+        email: '',
+        phone: '',
+        username: '',
+        password1: '',
+        password2: '',
+        question1: '',
+        question2: '',
+        answer1: '',
+        answer2: '',
+        newsletter: false
+    });
+
+    const setDataField = (key, value) => setData({
+        ...data,
+        [key]: value,
+    });
+
+    return <RegistrationContext.Provider value={{ data, setDataField }}>
+        {props.children}
+    </RegistrationContext.Provider>
+}
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -40,121 +77,149 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function PersonalForm() {
+/**
+ * @todo
+ * - add validator for each form when next is clicked. can pass down click notifier to child form so they can do their own validation
+ * @param {props} props 
+ */
+export default function Registration(props) {
+    const classes = useStyles();
+    const [step, setStep] = useState(0);
+    const forms = [
+        { label: 'Personal Information', form: <PersonalForm /> },
+        { label: 'Account Information', form: <AccountForm /> },
+        { label: 'Finish and Review', form: <ReviewForm /> }
+    ];
 
-    const { data, setData } = React.useContext(RegistrationContext);
-
-    const handleChange = event => {
-        setData({
-            ...data,
-            [event.target.name]: event.target.value,
-        });
+    const handleStepChange = (diff) => () => {
+        const newStep = step + diff;
+        if (newStep >= 0 && newStep < forms.length) {
+            setStep(newStep);
+        } else if (newStep === forms.length) {
+            // @todo - submit account for creation
+        }
     };
 
     return (
-        <Grid container spacing={1} justify="space-between">
+        <Container component="main" maxWidth="md" className={classes.container}>
+            <Typography variant="h5" component="h1" className={classes.heading}>Registration</Typography>
+            <Container>
+                <Stepper activeStep={step} className={classes.stepper}>
+                    {forms.map(form =>
+                        <Step key={form.label} completed={false}>
+                            <StepLabel>{form.label}</StepLabel>
+                        </Step>
+                    )}
+                </Stepper>
+                <RegistrationApp>
+                    {forms[step].form}
+                </RegistrationApp>
+                <Grid container spacing={1} item sm={12} justify="space-between">
+                    <Grid item sm={6} container justify="flex-start">
+                        <Button color="secondary" variant="contained" onClick={handleStepChange(-1)}>Back</Button>
+                    </Grid>
+                    <Grid item sm={6} container justify="flex-end">
+                        <Button color="primary" variant="contained" onClick={handleStepChange(1)}>{step === forms.length - 1 ? "Finish" : "Next"}</Button>
+                    </Grid>
+                </Grid>
+            </Container>
+        </Container>
+    );
+}
+
+function DataTextField(props) {
+    const { fieldId, fieldLabel, children, ...rest } = props;
+    const { data, setDataField } = React.useContext(RegistrationContext);
+    const handleChange = event => setDataField(fieldId, event.target.value);
+    return (
+        <TextField id={fieldId} name={fieldId} label={fieldLabel} value={data[fieldId]} onChange={handleChange} fullWidth required {...rest}>
+            {children}
+        </TextField>
+    );
+}
+
+function DataCheckBox(props) {
+    const { data, setDataField } = React.useContext(RegistrationContext);
+    const handleChange = event => setDataField(props.fieldId, event.target.checked);
+    return <FormControlLabel control={<Checkbox checked={data[props.fieldId]} onChange={handleChange} />} label={props.fieldLabel} />;
+}
+
+function PersonalForm() {
+    return (
+        <Grid container spacing={1} justify="flex-start">
             <Grid item xs={6}>
-                <TextField id="firstName" name="firstName" label="First Name" fullWidth required value={data.firstName} onChange={handleChange}></TextField>
+                <DataTextField fieldId="firstName" fieldLabel="First Name" />
             </Grid>
             <Grid item xs={6}>
-                <TextField id="lastName" name="lastName" label="Last Name" fullWidth required value={data.lastName} onChange={handleChange}></TextField>
+                <DataTextField fieldId="lastName" fieldLabel="Last Name" />
             </Grid>
             <Grid item xs={6} container>
-                <TextField type="date" InputLabelProps={{ shrink: true }} id="dob" name="dob" label="Date of Birth" fullWidth required value={data.dob} onChange={handleChange}></TextField>
+                <DataTextField fieldId="dob" fieldLabel="Date of Birth" type="date" InputLabelProps={{ shrink: true }} />
             </Grid>
             <Grid item xs={6}>
-                <TextField
-                    select
-                    label="Gender"
-                    id="gender"
-                    name="gender"
-                    value={data.gender}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                    SelectProps={{
-                        native: true
-                    }}
-                >
-                    <option key="" value="">
-                    </option>
-                    <option key="male" value="male">
-                        Male
-            </option>
-                    <option key="female" value="female">
-                        Female
-            </option>
-                </TextField>
+                <DataTextField fieldId="gender" fieldLabel="Gender" select SelectProps={{ native: true }}>
+                    <option key="" value=""></option>
+                    <option key="male" value="male">Male</option>
+                    <option key="female" value="female">Female</option>
+                </DataTextField>
             </Grid>
             <Grid item sm={12}>
-                <TextField id="address1" name="address1" label="Address 1" fullWidth value={data.address1} onChange={handleChange}></TextField>
+                <DataTextField fieldId="address1" fieldLabel="Address Line 1" />
             </Grid>
             <Grid item sm={12}>
-                <TextField id="address2" name="address2" label="Address 2" fullWidth value={data.address2} onChange={handleChange}></TextField>
+                <DataTextField fieldId="address2" fieldLabel="Address Line 2" required={false} />
+            </Grid>
+            <Grid item sm={1}>
+                <DataTextField fieldId="apt" fieldLabel="APT#" required={false} />
+            </Grid>
+            <Grid item sm={4}>
+                <DataTextField fieldId="city" fieldLabel="City" />
+            </Grid>
+            <Grid item sm={2}>
+                <DataTextField fieldId="state" fieldLabel="State" select SelectProps={{ native: true }}>
+                    <option key="" value=""></option>
+                    {STATES.map((state, i) => <option key={i} value={state}>{state}</option>)}
+                </DataTextField>
+            </Grid>
+            <Grid item sm={4}>
+                <DataTextField fieldId="zipcode" fieldLabel="Zip Code" />
+            </Grid>
+            <Grid item sm={6}>
+                <DataTextField fieldId="email" fieldLabel="Email" type="email" />
+            </Grid>
+            <Grid item sm={6}>
+                <DataTextField fieldId="phone" fieldLabel="Phone Number" required={false} />
             </Grid>
             <Grid item sm={12}>
-                <TextField type="email" name="email" label="Email" fullWidth value={data.email} onChange={handleChange}></TextField>
-            </Grid>
-            <Grid item sm={12}>
-                <FormControlLabel control={<Checkbox />}
-                    label="Subscribe to newsletter" />
+                <DataCheckBox fieldId="newsletter" fieldLabel="Subscribe to newsletter" />
             </Grid>
         </Grid>
     );
 }
 
 function AccountForm() {
-    const { data, setData } = React.useContext(RegistrationContext);
-
-    const [inner, setInner] = React.useState({
-        firstPassSet: false
-    });
-
-    const handleChange = event => {
-        setData({
-            ...data,
-            [event.target.name]: event.target.value,
-        });
-    };
-
+    const { data } = React.useContext(RegistrationContext);
     return (
         <Grid container spacing={1} justify="space-between">
-            <Grid item xs={8}>
-                <TextField id="username" name="username" label="Username" required value={data.username} onChange={handleChange}></TextField>
+            <Grid item xs={6}>
+                <DataTextField fieldId="username" fieldLabel="Username" />
             </Grid>
             <Grid item xs={6}>
-                <TextField id="password1" type="password" name="password1" label="Password" fullWidth required value={data.password1}
-                    onChange={event => {
-                        let value = event.target.value;
-                        handleChange(event);
-                        setInner({ ...inner, firstPassSet: value && value !== '' })
-                    }}></TextField>
+                <DataTextField fieldId="password1" fieldLabel="Password" type="password" />
             </Grid>
             <Grid item xs={6}>
-                <TextField id="password2" type="password" name="password2" label="Re-enter Password" fullWidth required value={data.password2} onChange={handleChange} disabled={!inner.firstPassSet}></TextField>
+                <DataTextField fieldId="password2" fieldLabel="Re-enter Password" type="password" disabled={data.password1 === undefined || data.password1 === ""} />
             </Grid>
             {[...Array(2).keys()].map(k => {
                 let key = k + 1;
                 return <React.Fragment key={k}>
                     <Grid item xs={12}>
-                        <TextField
-                            select
-                            label={`Question ${key}`}
-                            id={`question${key}`}
-                            name={`question${key}`}
-                            value={data[`question${key}`]}
-                            onChange={handleChange}
-                            fullWidth
-                            required
-                            SelectProps={{
-                                native: true
-                            }}
-                        >
+                        <DataTextField field={`question${key}`} fieldLabel={`Question ${key}`} select SelectProps={{ native: true }}>
                             {QUESTIONS.map(question => <option key={question}>{question}</option>)}
-                        </TextField>
+                        </DataTextField>
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField id={`answer${key}`} name={`answer${key}`} label={`Answer to Question ${key}`} fullWidth required value={data[`answer${key}`]} onChange={handleChange}></TextField>
+                        <DataTextField fieldId={`answer${key}`} fieldLabel={`Answer to Question ${key}`} />
                     </Grid>
                 </React.Fragment>
             })}
@@ -205,72 +270,5 @@ function ReviewForm() {
             <ReviewField xs={12} field="question1" label="Question 2" fullWidth />
             <ReviewField xs={12} field="answer2" label="Answer 2" fullWidth />
         </Grid>
-    );
-}
-
-/**
- * @todo
- * - add validator for each form when next is clicked. can pass down click notifier to child form so they can do their own validation
- * @param {props} props 
- */
-export default function Registration(props) {
-    const classes = useStyles();
-    const [data, setData] = useState({
-        firstName: '',
-        lastName: '',
-        gender: '',
-        dob: '',
-        address1: '',
-        address2: '',
-        email: '',
-        username: '',
-        password1: '',
-        password2: '',
-        question1: '',
-        question2: '',
-        answer1: '',
-        answer2: ''
-    });
-    const [step, setStep] = useState(0);
-
-    const forms = [
-        { label: 'Personal Information', form: <PersonalForm /> },
-        { label: 'Account Information', form: <AccountForm /> },
-        { label: 'Finish and Review', form: <ReviewForm /> }
-    ];
-
-    const handleStepChange = (diff) => () => {
-        const newStep = step + diff;
-        if (newStep >= 0 && newStep < forms.length) {
-            setStep(newStep);
-        } else if (newStep === forms.length) {
-            // @todo - submit account for creation
-        }
-    };
-
-    return (
-        <Container component="main" maxWidth="md" className={classes.container}>
-            <Typography variant="h5" component="h1" className={classes.heading}>Registration</Typography>
-            <Container>
-                <Stepper activeStep={step} className={classes.stepper}>
-                    {forms.map(form =>
-                        <Step key={form.label} completed={false}>
-                            <StepLabel>{form.label}</StepLabel>
-                        </Step>
-                    )}
-                </Stepper>
-                <RegistrationContext.Provider value={{ data, setData }}>
-                    {forms[step].form}
-                </RegistrationContext.Provider>
-                <Grid container spacing={1} item sm={12} justify="space-between">
-                    <Grid item sm={6} container justify="flex-start">
-                        <Button color="secondary" variant="contained" onClick={handleStepChange(-1)}>Back</Button>
-                    </Grid>
-                    <Grid item sm={6} container justify="flex-end">
-                        <Button color="primary" variant="contained" onClick={handleStepChange(1)}>{step === forms.length - 1 ? "Finish" : "Next"}</Button>
-                    </Grid>
-                </Grid>
-            </Container>
-        </Container>
     );
 }
