@@ -41,14 +41,12 @@ public class User {
     private String password;
     private boolean enabled;
     @JsonManagedReference
-    @NotNull
     @Valid
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     private Address address;
     @JsonManagedReference
-    @NotNull
     @Valid
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     private Preference preference;
     @JsonManagedReference
     @NotEmpty

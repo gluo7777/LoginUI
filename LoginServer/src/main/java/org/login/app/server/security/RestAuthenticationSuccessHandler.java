@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public class RestAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
     private RequestCache requestCache = new HttpSessionRequestCache();
@@ -28,5 +29,10 @@ public class RestAuthenticationSuccessHandler extends SavedRequestAwareAuthentic
             return;
         }
         clearAuthenticationAttributes(request);
+        try {
+            response.getWriter().println("test");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
