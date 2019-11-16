@@ -1,4 +1,4 @@
-import { Button, Checkbox, Container, FormControlLabel, Grid, makeStyles, TextField, Typography, Stepper, Step, StepLabel } from '@material-ui/core';
+import { Button, Checkbox, Container, FormControlLabel, Grid, makeStyles, TextField, Typography, Stepper, Step, StepLabel, Fade, Grow } from '@material-ui/core';
 import 'date-fns';
 import React, { useState } from 'react';
 
@@ -197,6 +197,8 @@ function PersonalForm() {
     );
 }
 
+const isBlank = text => !text || text.trim() === "";
+
 function AccountForm() {
     const { data } = React.useContext(RegistrationContext);
     return (
@@ -204,23 +206,33 @@ function AccountForm() {
             <Grid item xs={6}>
                 <DataTextField fieldId="username" fieldLabel="Username" />
             </Grid>
-            <Grid item xs={6}>
-                <DataTextField fieldId="password1" fieldLabel="Password" type="password" />
-            </Grid>
-            <Grid item xs={6}>
-                <DataTextField fieldId="password2" fieldLabel="Re-enter Password" type="password" disabled={data.password1 === undefined || data.password1 === ""} />
+            <Grid item xs={12} container spacing={1}>
+                <Grid item xs={6}>
+                    <DataTextField fieldId="password1" fieldLabel="Password" type="password" />
+                </Grid>
+                {
+                    !isBlank(data.password1) ?
+                        <Grow in={true} timeout={1000}>
+                            <Grid item xs={6}>
+                                <DataTextField fieldId="password2" fieldLabel="Re-enter Password" type="password" />
+                            </Grid>
+                        </Grow> : null
+                }
             </Grid>
             {[...Array(2).keys()].map(k => {
                 let key = k + 1;
                 return <React.Fragment key={k}>
                     <Grid item xs={12}>
-                        <DataTextField field={`question${key}`} fieldLabel={`Question ${key}`} select SelectProps={{ native: true }}>
+                        <DataTextField fieldId={`question${key}`} fieldLabel={`Question ${key}`} select SelectProps={{ native: true }}>
                             {QUESTIONS.map(question => <option key={question}>{question}</option>)}
                         </DataTextField>
                     </Grid>
-                    <Grid item xs={12}>
-                        <DataTextField fieldId={`answer${key}`} fieldLabel={`Answer to Question ${key}`} />
-                    </Grid>
+                    {!isBlank(data[`question${key}`]) ?
+                        <Grid item xs={12}>
+                            <Fade in={true}>
+                                <DataTextField fieldId={`answer${key}`} fieldLabel={`Answer to Question ${key}`} />
+                            </Fade>
+                        </Grid> : null}
                 </React.Fragment>
             })}
         </Grid>
@@ -233,7 +245,7 @@ function AccountForm() {
  * - add edit under each section that will go back to that page
  */
 function ReviewForm() {
-    const { data, setData } = React.useContext(RegistrationContext);
+    const { data } = React.useContext(RegistrationContext);
 
     const ReviewField = (props) => (
         <Grid item xs={props.xs || 6}>
@@ -261,7 +273,12 @@ function ReviewForm() {
             <ReviewField xs={6} field="dob" label="Date of Birth" fullWidth />
             <ReviewField xd={12} field="address1" label="Address 1" fullWidth />
             <ReviewField xd={12} field="address2" label="Address 2" fullWidth />
+            <ReviewField xd={1} field="apt" label="APT#" fullWidth />
+            <ReviewField xd={3} field="city" label="City" fullWidth />
+            <ReviewField xd={1} field="state" label="State" fullWidth />
+            <ReviewField xd={3} field="zipcode" label="Zip Code" fullWidth />
             <ReviewField xd={12} field="email" label="Email" fullWidth />
+            <ReviewField xd={12} field="phone" label="Phone" fullWidth />
             <ReviewHeading>Account Information</ReviewHeading>
             <ReviewField field="username" label="User Name" fullWidth />
             <ReviewField type="password" field="password2" label="Password" fullWidth />
