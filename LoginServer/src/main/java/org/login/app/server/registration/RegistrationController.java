@@ -1,5 +1,6 @@
-package org.login.app.server.account;
+package org.login.app.server.registration;
 
+import org.login.app.server.account.*;
 import org.login.app.server.security.Rules;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

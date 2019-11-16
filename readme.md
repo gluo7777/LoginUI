@@ -2,13 +2,17 @@
 
 ## Running
 
-> mvn spring-boot:run -Dspring-boot.run.arguments=--spring.profiles.active=local
+### UI
 
-## Consuming
+> cd ./LoginUI && npm start
 
-### API Endpoints
+Go to http://frontend.login.com:3000
 
-> curl -v -i -X GET http://localhost:9090/api
+### API
+
+> cd ./LoginServer && mvn spring-boot:run -Dspring-boot.run.arguments=--spring.profiles.active=local
+
+> curl -v -i -X GET http://backend.login.com:9090/api
 
 ## App Interaction
 

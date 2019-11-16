@@ -5,9 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 
-import javax.websocket.server.ServerEndpoint;
 import java.util.List;
 
 @Secured({Rules.ROLE_ADMIN})
@@ -16,5 +14,5 @@ public interface SecurityQuestionRepository extends CrudRepository<SecurityQuest
 
     @Secured({Rules.ROLE_ADMIN,Rules.ROLE_USER})
     @RestResource(exported = true)
-    List<SecurityQuestion> findByUserId(String userId);
+    List<SecurityQuestion> findByUserId(long userId);
 }
