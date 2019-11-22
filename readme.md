@@ -8,6 +8,22 @@
 
 Go to http://frontend.login.com:3000
 
+### Database
+
+#### Initial Set Up
+
+> ./LoginDB/setup.sh
+
+> ./LoginDB/create-tables.sh
+
+#### Start Server
+
+> docker start "local-postgres11.5-database"
+
+#### To run CLI to execute queries
+
+> docker exec -it "local-postgres11.5-database" psql -U postgres -d loginapp
+
 ### API
 
 > cd ./LoginServer && mvn spring-boot:run -Dspring-boot.run.arguments=--spring.profiles.active=local
