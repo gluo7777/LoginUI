@@ -1,8 +1,8 @@
 import { Button, Checkbox, Container, Fade, FormControlLabel, Grid, Grow, makeStyles, Step, StepLabel, Stepper, TextField, Typography } from '@material-ui/core';
 import 'date-fns';
 import React, { useState } from 'react';
-import { useLocation, Route, Redirect } from 'react-router-dom';
-import * as Client from '../lib/Client';
+import { Route, Redirect } from 'react-router-dom';
+import * as Client from '../http/Client';
 
 export default function Registration() {
     return (
@@ -28,6 +28,7 @@ const STATES = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Color
 const RegistrationContext = React.createContext(null);
 
 function RegistrationApp(props) {
+    // TODO: uncomment
     // const [data, setData] = useState({
     //     firstName: '',
     //     lastName: '',

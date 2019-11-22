@@ -1,5 +1,4 @@
 import React from 'react';
-import Client from '../lib/Client';
 
 export const GlobalContext = React.createContext();
 
