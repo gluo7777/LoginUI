@@ -2,7 +2,7 @@ import { Button, Checkbox, Container, Fade, FormControlLabel, Grid, Grow, makeSt
 import 'date-fns';
 import React, { useState } from 'react';
 import { useLocation, Route, Redirect } from 'react-router-dom';
-import * as Client from './lib/Client';
+import * as Client from '../lib/Client';
 
 export default function Registration() {
     return (

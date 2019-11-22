@@ -4,7 +4,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import React, { Suspense, lazy, useContext } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import 'typeface-roboto';
-import * as Configuration from './Configuration';
+import * as Configuration from './common/Configuration';
 
 let theme = createMuiTheme({
   palette: {
@@ -15,9 +15,9 @@ let theme = createMuiTheme({
 
 theme = responsiveFontSizes(theme, {});
 
-const Login = lazy(() => import('./Login'));
-const Registration = lazy(() => import('./Registration'));
-const Home = lazy(() => import('./Home'));
+const Login = lazy(() => import('./login/Login'));
+const Registration = lazy(() => import('./registration/Registration'));
+const Home = lazy(() => import('./home/Home'));
 
 export function App() {
   return (
