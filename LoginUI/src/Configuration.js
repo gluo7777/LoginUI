@@ -11,6 +11,7 @@ export function GlobalApp(props) {
     const [app, setApp] = React.useState({
         authenticated: isLoginSuccess()
     });
+
     const setField = (field, value) => {
         if (WRITABLE.indexOf(field) !== -1) {
             setApp({ ...app, [field]: value });
@@ -18,11 +19,15 @@ export function GlobalApp(props) {
             throw Error(`Cannot write to ${field}. Allowed fields are ${WRITABLE}.`)
         }
     };
+
+    const setAuthenticated = flag => setField(AUTHENTICATED, flag);
+
     return (
         <GlobalContext.Provider
             value={{
                 app: app,
-                setField: setField
+                setField: setField,
+                setAuthenticated: setAuthenticated
             }}>
             {props.children}
         </GlobalContext.Provider>

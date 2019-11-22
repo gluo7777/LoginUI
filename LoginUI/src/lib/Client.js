@@ -10,27 +10,33 @@ export async function login(username, password) {
     let credentials = new FormData();
     credentials.append('username', username);
     credentials.append('password', password);
-
-    let res = await fetch(url, {
-        method: 'POST'
-        , mode: 'cors'
-        , credentials: 'include'
-        , body: credentials
-    });
-
-    return res.status === 200;
+    try {
+        let res = await fetch(url, {
+            method: 'POST'
+            , mode: 'cors'
+            , credentials: 'include'
+            , body: credentials
+        });
+        return res.status === 200;
+    } catch (e) {
+        console.error("API Login failed with following error: ", e.msg);
+    }
 };
 
 export async function logout() {
     let url = LOGIN_API + "/app/logout";
 
-    let res = await fetch(url, {
-        method: 'GET'
-        , mode: 'cors'
-        , credentials: 'include'
-    });
+    try {
+        let res = await fetch(url, {
+            method: 'GET'
+            , mode: 'cors'
+            , credentials: 'include'
+        });
 
-    return res.status === 200;
+        return res.status === 200;
+    } catch (e) {
+        console.error("API Logout failed with following error: ", e.msg);
+    }
 }
 
 export async function registerAccount(accountInfo) {
