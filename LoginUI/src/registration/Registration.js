@@ -3,6 +3,7 @@ import 'date-fns';
 import React, { useState } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import * as Client from '../http/Client';
+import DATA from './data';
 
 export default function Registration() {
     return (
@@ -12,68 +13,11 @@ export default function Registration() {
     );
 }
 
-const QUESTIONS = [
-    ''
-    , 'In what county were you born?'
-    , 'What is your oldest cousin’s first name?'
-    , 'What is the title and artist of your favorite song?'
-    , 'What is your work address?'
-    , 'What is your oldest sibling’s middle name?'
-    , 'Would you date your cousin if you were not related?'
-    , 'What is your car’s license plate number?'
-];
-
-const STATES = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];
-
 const RegistrationContext = React.createContext(null);
 
 function RegistrationApp(props) {
-    // TODO: uncomment
-    // const [data, setData] = useState({
-    //     firstName: '',
-    //     lastName: '',
-    //     gender: '',
-    //     dob: '',
-    //     address1: '',
-    //     address2: '',
-    //     apt: '',
-    //     city: '',
-    //     state: '',
-    //     zipcode: '',
-    //     email: '',
-    //     phone: '',
-    //     username: '',
-    //     password1: '',
-    //     password2: '',
-    //     question1: '',
-    //     question2: '',
-    //     answer1: '',
-    //     answer2: '',
-    //     newsletter: false
-    // });
-    const [data, setData] = useState({
-        firstName: 'William',
-        lastName: 'Luo',
-        gender: 'male',
-        dob: '1900-11-05',
-        address1: '2300 Nuclear Drive',
-        address2: '',
-        apt: '#400',
-        city: 'Portland',
-        state: 'Texas',
-        zipcode: '55543',
-        email: 'butt@buttmail.com',
-        phone: '1234321111',
-        username: 'willyb1',
-        password1: 'abc123',
-        password2: 'abc123',
-        question1: 'In what county were you born?',
-        question2: 'What is your work address?',
-        answer1: 'idk',
-        answer2: 'stfu',
-        newsletter: true
-    });
-
+    // TODO: change to DATA.fields.blanks
+    const [data, setData] = useState(DATA.fields.placeholders);
     const setDataField = (key, value) => setData({
         ...data,
         [key]: value,
@@ -265,7 +209,7 @@ function PersonalForm() {
             <Grid item sm={2}>
                 <DataTextField fieldId="state" fieldLabel="State" select SelectProps={{ native: true }}>
                     <option key="" value=""></option>
-                    {STATES.map((state, i) => <option key={i} value={state}>{state}</option>)}
+                    {DATA.states.map((state, i) => <option key={i} value={state}>{state}</option>)}
                 </DataTextField>
             </Grid>
             <Grid item sm={4}>
@@ -311,7 +255,7 @@ function AccountForm() {
                 return <React.Fragment key={k}>
                     <Grid item xs={12}>
                         <DataTextField fieldId={`question${key}`} fieldLabel={`Question ${key}`} select SelectProps={{ native: true }}>
-                            {QUESTIONS.map(question => <option key={question}>{question}</option>)}
+                            {DATA.securityQuestions.map(question => <option key={question}>{question}</option>)}
                         </DataTextField>
                     </Grid>
                     {!isBlank(data[`question${key}`]) ?
