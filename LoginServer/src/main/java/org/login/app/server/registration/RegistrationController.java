@@ -45,6 +45,7 @@ public class RegistrationController {
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.getSecurityQuestions().forEach(securityQuestion -> securityQuestion.setUser(user));
+        user.setEnabled(true);
         User savedUser = userRepository.save(user);
         Authority authority = new Authority();
         authority.setUser(savedUser);
