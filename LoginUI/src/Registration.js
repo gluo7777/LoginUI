@@ -1,6 +1,16 @@
-import { Button, Checkbox, Container, FormControlLabel, Grid, makeStyles, TextField, Typography, Stepper, Step, StepLabel, Fade, Grow } from '@material-ui/core';
+import { Button, Checkbox, Container, Fade, FormControlLabel, Grid, Grow, makeStyles, Step, StepLabel, Stepper, TextField, Typography } from '@material-ui/core';
 import 'date-fns';
 import React, { useState } from 'react';
+import { useLocation, Route, Redirect } from 'react-router-dom';
+import * as Client from './lib/Client';
+
+export default function Registration() {
+    return (
+        <RegistrationApp>
+            <RegistrationForms />
+        </RegistrationApp>
+    );
+}
 
 const QUESTIONS = [
     ''
@@ -18,27 +28,49 @@ const STATES = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Color
 const RegistrationContext = React.createContext(null);
 
 function RegistrationApp(props) {
+    // const [data, setData] = useState({
+    //     firstName: '',
+    //     lastName: '',
+    //     gender: '',
+    //     dob: '',
+    //     address1: '',
+    //     address2: '',
+    //     apt: '',
+    //     city: '',
+    //     state: '',
+    //     zipcode: '',
+    //     email: '',
+    //     phone: '',
+    //     username: '',
+    //     password1: '',
+    //     password2: '',
+    //     question1: '',
+    //     question2: '',
+    //     answer1: '',
+    //     answer2: '',
+    //     newsletter: false
+    // });
     const [data, setData] = useState({
-        firstName: '',
-        lastName: '',
-        gender: '',
-        dob: '',
-        address1: '',
+        firstName: 'William',
+        lastName: 'Luo',
+        gender: 'male',
+        dob: '1900-11-05',
+        address1: '2300 Nuclear Drive',
         address2: '',
-        apt: '',
-        city: '',
-        state: '',
-        zipcode: '',
-        email: '',
-        phone: '',
-        username: '',
-        password1: '',
-        password2: '',
-        question1: '',
-        question2: '',
-        answer1: '',
-        answer2: '',
-        newsletter: false
+        apt: '#400',
+        city: 'Portland',
+        state: 'Texas',
+        zipcode: '55543',
+        email: 'butt@buttmail.com',
+        phone: '1234321111',
+        username: 'willyb1',
+        password1: 'abc123',
+        password2: 'abc123',
+        question1: 'In what county were you born?',
+        question2: 'What is your work address?',
+        answer1: 'idk',
+        answer2: 'stfu',
+        newsletter: true
     });
 
     const setDataField = (key, value) => setData({
@@ -77,26 +109,43 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-/**
- * @todo
- * - add validator for each form when next is clicked. can pass down click notifier to child form so they can do their own validation
- * @param {props} props 
- */
-export default function Registration(props) {
+function RegistrationForms() {
     const classes = useStyles();
+    const { data } = React.useContext(RegistrationContext);
     const [step, setStep] = useState(0);
+    const [action, setAction] = useState('register');
+
+    if (action === 'login') {
+        return <Route>
+            <Redirect to={{
+                pathname: "/login"
+            }}>
+            </Redirect>
+        </Route>;
+    }
+
     const forms = [
         { label: 'Personal Information', form: <PersonalForm /> },
         { label: 'Account Information', form: <AccountForm /> },
         { label: 'Finish and Review', form: <ReviewForm /> }
     ];
 
-    const handleStepChange = (diff) => () => {
+    const handleStepChange = (diff) => async () => {
         const newStep = step + diff;
         if (newStep >= 0 && newStep < forms.length) {
             setStep(newStep);
         } else if (newStep === forms.length) {
-            // @todo - submit account for creation
+            const accountInfo = buildAccountInfoRequest(data);
+            const success = await Client.registerAccount(accountInfo);
+            if (success) {
+                // redirect to login page
+                console.log("Succesfully registered user!");
+                setAction('login');
+            } else {
+                // show error pop up
+                console.log("Failed to register!")
+                setAction('error');
+            }
         }
     };
 
@@ -111,9 +160,7 @@ export default function Registration(props) {
                         </Step>
                     )}
                 </Stepper>
-                <RegistrationApp>
-                    {forms[step].form}
-                </RegistrationApp>
+                {forms[step].form}
                 <Grid container spacing={1} item sm={12} justify="space-between">
                     <Grid item sm={6} container justify="flex-start">
                         <Button color="secondary" variant="contained" onClick={handleStepChange(-1)}>Back</Button>
@@ -125,6 +172,45 @@ export default function Registration(props) {
             </Container>
         </Container>
     );
+}
+
+function buildAccountInfoRequest(formData) {
+    let accountInfo = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        gender: formData.gender,
+        dateOfBirth: formData.dob,
+        email: formData.email,
+        username: formData.username,
+        password: formData.password1
+    };
+
+    accountInfo.address = {
+        addressLine1: formData.address1,
+        addressLine2: formData.address2,
+        roomNumber: formData.apt,
+        city: formData.city,
+        state: formData.state,
+        zipcode: formData.zipcode,
+        phoneNumber: formData.phone
+    };
+
+    accountInfo.preference = {
+        newsletter: formData.newsletter
+    };
+
+    accountInfo.securityQuestions = [
+        {
+            question: formData.question1,
+            answer: formData.answer1
+        },
+        {
+            question: formData.question2,
+            answer: formData.answer2
+        }
+    ];
+
+    return accountInfo;
 }
 
 function DataTextField(props) {
@@ -284,7 +370,7 @@ function ReviewForm() {
             <ReviewField type="password" field="password2" label="Password" fullWidth />
             <ReviewField xs={12} field="question1" label="Question 1" fullWidth />
             <ReviewField xs={12} field="answer1" label="Answer 1" fullWidth />
-            <ReviewField xs={12} field="question1" label="Question 2" fullWidth />
+            <ReviewField xs={12} field="question2" label="Question 2" fullWidth />
             <ReviewField xs={12} field="answer2" label="Answer 2" fullWidth />
         </Grid>
     );

@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS security.users(
     ,first_name TEXT
     ,last_name TEXT
     ,email TEXT
+    ,gender TEXT
     ,date_of_birth TIMESTAMP
 );
 

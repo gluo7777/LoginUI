@@ -7,7 +7,6 @@ import org.login.app.server.account.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -31,7 +30,6 @@ public class Address {
     private String zipcode;
     private String phoneNumber;
     @JsonBackReference
-    @NotNull
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;

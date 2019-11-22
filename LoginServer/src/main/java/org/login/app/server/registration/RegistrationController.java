@@ -1,6 +1,7 @@
 package org.login.app.server.registration;
 
 import org.login.app.server.account.*;
+import org.login.app.server.common.Message;
 import org.login.app.server.security.Rules;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,10 +38,10 @@ public class RegistrationController {
 
     @Secured({Rules.ROLE_ANONYMOUS, Rules.RUN_AS_SUPER_USER})
     @PostMapping(path = "/registration", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createAccount(@Valid @RequestBody User user){
+    public ResponseEntity<?> createAccount(@Valid @RequestBody User user){
         User foundUser = userRepository.findByUsername(user.getUsername()).orElse(null);
         if(foundUser != null){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Message.builder().message("Username already exists.").build());
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.getSecurityQuestions().forEach(securityQuestion -> securityQuestion.setUser(user));

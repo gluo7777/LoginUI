@@ -33,6 +33,22 @@ export async function logout() {
     return res.status === 200;
 }
 
-export async function getUserInfo() {
-    let url = LOGIN_API + "/app/logout";
+export async function registerAccount(accountInfo) {
+    let url = LOGIN_API + "/api/registration";
+
+    try {
+        let res = await fetch(url, {
+            method: 'POST'
+            , mode: 'cors'
+            , credentials: 'include'
+            , headers: {
+                "Content-Type": "application/json"
+            }
+            , body: JSON.stringify(accountInfo)
+        });
+        return res.status === 201;
+    } catch (e) {
+        console.error("API Registration failed with following error: ", e.msg);
+    }
+
 }
