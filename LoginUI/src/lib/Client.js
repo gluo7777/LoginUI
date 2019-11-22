@@ -32,3 +32,7 @@ export async function logout() {
 
     return res.status === 200;
 }
+
+export async function getUserInfo() {
+    let url = LOGIN_API + "/app/logout";
+}

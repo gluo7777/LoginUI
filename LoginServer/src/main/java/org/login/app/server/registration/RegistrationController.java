@@ -49,6 +49,8 @@ public class RegistrationController {
         authority.setUser(savedUser);
         authority.setAuthority(Rules.ROLE_USER);
         authorityRepository.save(authority);
+        User userInfo = new User();
+        userInfo.setId(savedUser.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
