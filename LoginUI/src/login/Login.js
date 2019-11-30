@@ -1,9 +1,9 @@
 import { Avatar, Button, Checkbox, Container, FormControlLabel, Grid, Icon, Link, makeStyles, TextField, Typography } from '@material-ui/core';
 import { deepOrange } from '@material-ui/core/colors';
 import React from 'react';
-import * as Configuration from './Configuration';
+import * as Configuration from '../common/Configuration';
 import { useHistory, useLocation, Redirect } from 'react-router-dom';
-import * as Client from './lib/Client';
+import * as Client from '../http/Client';
 
 const loginStyles = makeStyles(theme => ({
     paper: {

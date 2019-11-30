@@ -3,8 +3,8 @@ import MenuIcon from '@material-ui/icons/Menu'
 import { AccountCircle } from '@material-ui/icons'
 import React from 'react';
 import { makeStyles } from '@material-ui/styles';
-import * as Configuration from './Configuration';
-import * as Client from './lib/Client';
+import * as Configuration from '../common/Configuration';
+import * as Client from '../http/Client';
 
 const useStyles = makeStyles(theme => ({
     root: {
