@@ -2,7 +2,6 @@ package org.login.app.server.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.login.app.server.account.User;
-import org.login.app.server.account.UserRepository;
 import org.login.app.server.account.UserRetrievalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,6 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
 
 public class RestAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
