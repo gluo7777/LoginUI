@@ -8,7 +8,7 @@ const WRITABLE = [AUTHENTICATED];
 
 export function GlobalApp(props) {
     const [app, setApp] = React.useState({
-        authenticated: isLoginSuccess()
+        authenticated: false
     });
 
     const setField = (field, value) => {
@@ -35,9 +35,3 @@ export function GlobalApp(props) {
 
 export const GlobalContextConsumer = GlobalContext.Consumer;
 
-function isLoginSuccess() {
-    const query = new URLSearchParams(window.location.search);
-    return query ?
-        query.has("loginSuccess") && query.get("loginSuccess") === "true"
-        : false;
-}
