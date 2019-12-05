@@ -32,11 +32,6 @@ export function App() {
                   {context => <Home logout={context.logout} />}
                 </Configuration.GlobalContext.Consumer>
               </ProtectedRoute>
-              <ProtectedRoute path="/admin">
-                <div>
-                  <h1>Under Construction</h1>
-                </div>
-              </ProtectedRoute>
               <LoginRoute path="/login" redirectPath="/home" />
               <Route path="/registration">
                 <Registration />
