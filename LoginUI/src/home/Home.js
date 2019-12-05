@@ -3,8 +3,6 @@ import MenuIcon from '@material-ui/icons/Menu'
 import { AccountCircle } from '@material-ui/icons'
 import React from 'react';
 import { makeStyles } from '@material-ui/styles';
-import * as Configuration from '../common/Configuration';
-import * as Client from '../http/Client';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -22,11 +20,10 @@ const useStyles = makeStyles(theme => ({
 }))
 
 
-export default function Home(params) {
+export default function Home(props) {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
-    const { setField } = React.useContext(Configuration.GlobalContext);
 
     const handleMenu = event => {
         setAnchorEl(event.currentTarget);
@@ -37,8 +34,7 @@ export default function Home(params) {
     };
 
     const logout = () => {
-        Client.logout();
-        setField(Configuration.AUTHENTICATED, false);
+        props.logout();
     };
 
     return (

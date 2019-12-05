@@ -17,9 +17,13 @@ export async function login(username, password) {
             , credentials: 'include'
             , body: credentials
         });
-        return res.status === 200;
+        if (res.status === 200) {
+            let user = await res.json();
+            return user;
+        }
+        return null;
     } catch (e) {
-        console.error("API Login failed with following error: ", e.msg);
+        console.error("API Login failed with following error: ", e);
     }
 };
 
@@ -36,6 +40,32 @@ export async function logout() {
         return res.status === 200;
     } catch (e) {
         console.error("API Logout failed with following error: ", e.msg);
+    }
+}
+
+/**
+ * returns userId or null if not logged in
+ * @param {Function} onSuccess - @param userInfo - for json response handling
+ * @param {Function} onFailure - called when user is not logged in
+ */
+export async function fetchCurrentUser() {
+    let url = LOGIN_API + "/api/user/current";
+
+    try {
+        let res = await fetch(url, {
+            method: 'GET'
+            , mode: 'cors'
+            , credentials: 'include'
+        });
+
+        if (res.status === 200) {
+            let json = await res.json();
+            return json;
+        }
+
+        return null;
+    } catch (e) {
+        console.error("API failed to retrieve current user with error: ", e);
     }
 }
 

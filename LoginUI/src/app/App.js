@@ -1,8 +1,8 @@
 import { createMuiTheme, CssBaseline, responsiveFontSizes } from '@material-ui/core';
 import { lightBlue, orange } from '@material-ui/core/colors';
 import { ThemeProvider } from '@material-ui/styles';
-import React, { Suspense, lazy, useContext } from 'react';
-import { BrowserRouter as Router, Switch, Route, Redirect, useLocation } from 'react-router-dom';
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import 'typeface-roboto';
 import * as Configuration from '../common/Configuration';
 
@@ -21,21 +21,23 @@ const Home = lazy(() => import('../home/Home'));
 
 export function App() {
   return (
-    <Configuration.GlobalApp>
+    <Configuration.GlobalProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Router>
           <Suspense fallback={<Loading />}>
             <Switch>
-              <RedirectLogin path="/home">
-                <Home />
-              </RedirectLogin>
-              <RedirectLogin path="/admin">
-                <Home />
-              </RedirectLogin>
-              <Route path="/login">
-                <Login redirectpath="/home" />
-              </Route>
+              <ProtectedRoute path="/home">
+                <Configuration.GlobalContext.Consumer>
+                  {context => <Home logout={context.logout} />}
+                </Configuration.GlobalContext.Consumer>
+              </ProtectedRoute>
+              <ProtectedRoute path="/admin">
+                <div>
+                  <h1>Under Construction</h1>
+                </div>
+              </ProtectedRoute>
+              <LoginRoute path="/login" redirectPath="/home" />
               <Route path="/registration">
                 <Registration />
               </Route>
@@ -48,7 +50,7 @@ export function App() {
           </Suspense>
         </Router>
       </ThemeProvider>
-    </Configuration.GlobalApp>
+    </Configuration.GlobalProvider>
   );
 }
 
@@ -61,19 +63,45 @@ function Loading() {
   )
 }
 
-function RedirectLogin({ children, ...rest }) {
-  const { app } = React.useContext(Configuration.GlobalContext);
-  const location = useLocation();
-  return (
-    <Route {...rest}>
-      {
-        app.authenticated ?
-          children
-          : <Redirect to={{
-            pathname: "/login"
-            , state: { from: location }
-          }} />
-      }
-    </Route>
-  )
+class LoginRoute extends React.Component {
+  static contextType = Configuration.GlobalContext;
+  async componentDidMount() {
+    const context = this.context;
+    await context.reauthenticate();
+  }
+  render() {
+    const { redirectPath, ...rest } = this.props;
+    const context = this.context;
+    return (<Route {...rest} render={args => {
+      return context.app.authenticated ?
+        <Redirect to={{
+          pathname: redirectPath
+          , state: { from: args.location }
+        }} />
+        : <Login login={context.login} />;
+    }
+    } />);
+  }
+}
+
+
+class ProtectedRoute extends React.Component {
+  static contextType = Configuration.GlobalContext;
+  async componentDidMount() {
+    const context = this.context;
+    await context.reauthenticate();
+  }
+  render() {
+    const context = this.context;
+    const { children, ...rest } = this.props;
+    return (<Route {...rest} render={args => {
+      return context.app.authenticated ?
+        children
+        : <Redirect to={{
+          pathname: "/login"
+          , state: { from: args.location }
+        }} />
+    }
+    } />)
+  }
 }
