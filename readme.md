@@ -16,7 +16,7 @@ Go to http://frontend.login.com:3000
 
 > ./LoginDB/create-tables.sh
 
-#### Start Server
+#### Start Database Server
 
 > docker start "local-postgres11.5-database"
 
@@ -26,7 +26,9 @@ Go to http://frontend.login.com:3000
 
 ### API
 
-> cd ./LoginServer && mvn spring-boot:run -Dspring-boot.run.arguments=--spring.profiles.active=local
+> mvn -f ./LoginServer/pom.xml spring-boot:run 
+
+Optional: `-Dspring-boot.run.arguments=--spring.profiles.active=local`
 
 > curl -v -i -X GET http://backend.login.com:9090/api
 

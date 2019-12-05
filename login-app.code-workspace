@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "LoginServer"
+		},
+		{
+			"path": "Prototypes"
 		}
 	],
 	"settings": {
