@@ -5,6 +5,7 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import 'typeface-roboto';
 import * as Configuration from '../common/Configuration';
+import Spinner from './Spinner';
 
 let theme = createMuiTheme({
   palette: {
@@ -25,7 +26,7 @@ export function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Router>
-          <Suspense fallback={<Loading />}>
+          <Suspense fallback={<Spinner />}>
             <Switch>
               <ProtectedRoute path="/home">
                 <Configuration.GlobalContext.Consumer>
@@ -47,15 +48,6 @@ export function App() {
       </ThemeProvider>
     </Configuration.GlobalProvider>
   );
-}
-
-function Loading() {
-  return (
-    <div>
-      <h1>Loading...</h1>
-      <h5>Placeholder for loading screen...</h5>
-    </div>
-  )
 }
 
 class LoginRoute extends React.Component {
