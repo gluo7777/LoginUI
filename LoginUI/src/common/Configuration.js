@@ -6,6 +6,8 @@ export const GlobalContext = React.createContext();
 // Property names
 export const AUTHENTICATED = 'authenticated';
 export const USERID = 'userId';
+export const SESSION_TIME = 'sessionTime';
+export const DEFAULT_SESSION_TIME = 15 * 60 * 1000;
 
 const WRITABLE = [AUTHENTICATED, USERID];
 
@@ -35,12 +37,11 @@ export class GlobalProvider extends React.Component {
             this.setAuthenticated(success);
         }
         this.logout = async () => {
+            this.setAuthenticated(false);
             try {
-                await Client.logout();
+                Client.logout();
             } catch (error) {
                 console.error(`Error during logout: ${error}`);
-            } finally {
-                this.setAuthenticated(false);
             }
         }
         this.reauthenticate = async () => {

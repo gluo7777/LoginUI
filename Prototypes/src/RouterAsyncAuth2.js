@@ -10,14 +10,49 @@ class AppProvider extends React.Component {
     super(props);
     this.state = {
       authenticated: false,
-      user: null
+      user: null,
+      timer: null,
+      display: 60
     }
-    this.login = () => {
-      api.login(userInfo => this.setState({ authenticated: true, user: userInfo.id }));
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
+  }
+  login() {
+    api.login(userInfo => {
+      this.setState({ authenticated: true, user: userInfo.id });
+      this.start();
+    });
+  }
+  logout() {
+    api.logout(() => this.setState({ authenticated: false, user: null }));
+    this.stop();
+  }
+  stop() {
+    if (this.state.timer) {
+      clearTimeout(this.state.timer);
+      this.setState({
+        timer: null,
+        display: 60
+      })
     }
-    this.logout = () => {
-      api.logout(() => this.setState({ authenticated: false, user: null }));
-    }
+  }
+  start() {
+    if (this.state.timer !== null)
+      return;
+    let timer = setInterval(() => {
+      this.setState(state => {
+        if (state.display === 0) {
+          clearTimeout(state.timer);
+          state.timer = null;
+          state.display = 60;
+          this.logout();
+        } else {
+          state.display = state.display - 1;
+        }
+        return state;
+      });
+    }, 1000);
+    this.setState({ timer: timer });
   }
   async componentDidMount() {
     console.log("AppProvider mounted")
@@ -32,12 +67,14 @@ class AppProvider extends React.Component {
     if (res.status === 200) {
       let user = await res.json();
       this.setState({ authenticated: true, user: user.username });
+      this.start();
     } else {
       this.setState({ authenticated: false, user: null });
     }
   }
   componentWillUnmount() {
     this._isMounted = false;
+    this.stop();
   }
   render() {
 
@@ -60,6 +97,13 @@ class App extends React.Component {
         <Router>
           <React.Suspense fallback={<Loading />}>
             <header>
+              <AppContext.Consumer>
+                {context =>
+                  <div>
+                    <p>Timer: {context.state.display}</p>
+                  </div>
+                }
+              </AppContext.Consumer>
               <nav>
                 <ul>
                   <li><Link to="/home">Home</Link></li>

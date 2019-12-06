@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 import 'typeface-roboto';
 import * as Configuration from '../common/Configuration';
 import Spinner from './Spinner';
+import TimeoutModal from './Session';
 
 let theme = createMuiTheme({
   palette: {
@@ -27,6 +28,7 @@ export function App() {
         <CssBaseline />
         <Router>
           <Suspense fallback={<Spinner />}>
+            <TimeoutModal />
             <Switch>
               <ProtectedRoute path="/home">
                 <Configuration.GlobalContext.Consumer>
