@@ -17,13 +17,11 @@ const SECOND = 1000;
 // @todo: move timeout logic to state
 // only read authenticated value from context
 class TimeoutModal extends React.Component {
-    static contextType = Configuration.GlobalContext;
     constructor() {
         super();
         this.state = {
             remainingTime: DEFAULT_SESSION_TIME,
-            interval: null,
-            once: false
+            interval: null
         }
         this.handleClose = () => {
             console.log("modal closed")
@@ -32,8 +30,14 @@ class TimeoutModal extends React.Component {
         this.resetSession = this.resetSession.bind(this);
     }
 
-    componentDidUpdate() {
-        if (this.context.app.authenticated && this.state.interval === null && !this.state.once) {
+    componentDidUpdate(prevProps) {
+        const curAuth = this.props.context.app.authenticated;
+        const prevAuth = prevProps.context.app.authenticated;
+
+        console.log(`PrevAuth=${prevAuth}. CurAuth=${curAuth}`);
+
+        // user was recently authenticated
+        if (prevAuth === false && curAuth === true) {
             this.setState({
                 interval: setInterval(() => {
                     this.setState(state => {
@@ -43,9 +47,8 @@ class TimeoutModal extends React.Component {
                                 clearTimeout(state.interval);
                                 state.interval = null;
                             }
-                            state.once = true;
                             state.remainingTime = DEFAULT_SESSION_TIME;
-                            this.context.logout();
+                            this.props.context.logout();
                         } else {
                             state.remainingTime -= SECOND;
                         }
@@ -53,6 +56,19 @@ class TimeoutModal extends React.Component {
                     });
                 }, SECOND)
             })
+        }
+        // user was recently un-authenticated
+        else if (prevAuth === true && curAuth === false) {
+            this.setState(state => {
+                clearInterval(state.interval);
+                state.interval = null;
+                state.remainingTime = DEFAULT_SESSION_TIME;
+                return state;
+            });
+        }
+        // no change in auth
+        else {
+            return;
         }
     }
 
@@ -71,7 +87,7 @@ class TimeoutModal extends React.Component {
             state.remainingTime = DEFAULT_SESSION_TIME;
             return state;
         });
-        this.context.logout();
+        this.props.context.logout();
     }
 
     resetSession() {
@@ -81,24 +97,31 @@ class TimeoutModal extends React.Component {
     }
 
     render() {
-        return <Dialog onClose={this.handleClose} aria-labelledby="alert-dialog-title" open={this.context.app.authenticated && this.state.remainingTime <= TIME_LEFT_TO_DISPLAY}>
-            <DialogTitle id="alert-dialog-title">Your session is about to expire due to inactivity.</DialogTitle>
-            <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                    Would you like to remain logged in?
-          </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={this.endSession} color="secondary" variant="contained">
-                    Log Me Out
-          </Button>
-                <Button onClick={this.resetSession} color="primary" variant="contained" autoFocus>
-                    Stay Logged In
-          </Button>
-            </DialogActions>
-        </Dialog>
-            ;
+        const isAuth = this.props.context.app.authenticated;
+        const isTimeAlmostUp = this.state.remainingTime <= TIME_LEFT_TO_DISPLAY;
+        return <div>
+            <Dialog onClose={this.handleClose} aria-labelledby="alert-dialog-title" open={isAuth && isTimeAlmostUp}>
+                <DialogTitle id="alert-dialog-title">Your session is about to expire due to inactivity.</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">Would you like to remain logged in?</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={this.endSession} color="secondary" variant="contained">Log Me Out</Button>
+                    <Button onClick={this.resetSession} color="primary" variant="contained" autoFocus>Stay Logged In</Button>
+                </DialogActions>
+            </Dialog>
+            {this.props.children}
+        </div>;
     }
 }
 
-export default TimeoutModal;
+const SessionProvider = props => <Configuration.GlobalContext.Consumer>
+    {
+        context =>
+            <TimeoutModal context={context}>
+                {props.children}
+            </TimeoutModal>
+    }
+</Configuration.GlobalContext.Consumer>;
+
+export default SessionProvider;

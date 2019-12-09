@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 import 'typeface-roboto';
 import * as Configuration from '../common/Configuration';
 import Spinner from './Spinner';
-import TimeoutModal from './Session';
+import SessionProvider from './Session';
 
 let theme = createMuiTheme({
   palette: {
@@ -26,27 +26,28 @@ export function App() {
     <Configuration.GlobalProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Router>
-          <Suspense fallback={<Spinner />}>
-            <TimeoutModal />
-            <Switch>
-              <ProtectedRoute path="/home">
-                <Configuration.GlobalContext.Consumer>
-                  {context => <Home logout={context.logout} />}
-                </Configuration.GlobalContext.Consumer>
-              </ProtectedRoute>
-              <LoginRoute path="/login" redirectPath="/home" />
-              <Route path="/registration">
-                <Registration />
-              </Route>
-              <Route path="*">
-                <Redirect to={{
-                  pathname: "/login"
-                }} />
-              </Route>
-            </Switch>
-          </Suspense>
-        </Router>
+        <SessionProvider>
+          <Router>
+            <Suspense fallback={<Spinner />}>
+              <Switch>
+                <ProtectedRoute path="/home">
+                  <Configuration.GlobalContext.Consumer>
+                    {context => <Home logout={context.logout} />}
+                  </Configuration.GlobalContext.Consumer>
+                </ProtectedRoute>
+                <LoginRoute path="/login" redirectPath="/home" />
+                <Route path="/registration">
+                  <Registration />
+                </Route>
+                <Route path="*">
+                  <Redirect to={{
+                    pathname: "/login"
+                  }} />
+                </Route>
+              </Switch>
+            </Suspense>
+          </Router>
+        </SessionProvider>
       </ThemeProvider>
     </Configuration.GlobalProvider>
   );
