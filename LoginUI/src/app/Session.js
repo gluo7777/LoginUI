@@ -7,15 +7,16 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import * as Configuration from '../common/Configuration';
 
-// export const DEFAULT_SESSION_TIME = 15 * 60 * 1000;
-// export const TIME_LEFT_TO_DISPLAY = 1 * 60 * 1000;
-
-const DEFAULT_SESSION_TIME = 20000;
-const TIME_LEFT_TO_DISPLAY = 15000;
 const SECOND = 1000;
+const MINUTE = 60 * SECOND;
+const DEFAULT_SESSION_TIME = 15 * MINUTE;
+const TIME_LEFT_TO_DISPLAY = 1 * MINUTE;
 
-// @todo: move timeout logic to state
-// only read authenticated value from context
+// testing
+// const DEFAULT_SESSION_TIME = 20000;
+// const TIME_LEFT_TO_DISPLAY = 15000;
+
+
 class TimeoutModal extends React.Component {
     constructor() {
         super();
