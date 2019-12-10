@@ -1,23 +1,24 @@
 import { Fade, Grid, Grow } from '@material-ui/core';
 import React from 'react';
-import { DataTextField, isBlank } from './common';
+import { DataTextField, isBlank, PasswordField } from './common';
 import DATA from './data';
 import { RegistrationContext } from './Registration';
 
 export function AccountForm() {
     const { data } = React.useContext(RegistrationContext);
+    // const [passwordVisible, setPasswordVisible] = React.useState(false);
     return (<Grid container spacing={1} justify="space-between">
         <Grid item xs={6}>
             <DataTextField fieldId="username" fieldLabel="Username" />
         </Grid>
         <Grid item xs={12} container spacing={1}>
             <Grid item xs={6}>
-                <DataTextField fieldId="password1" fieldLabel="Password" type="password" />
+                <PasswordField fieldId="password1" fieldLabel="Password" />
             </Grid>
             {!isBlank(data.password1) ?
                 <Grow in={true} timeout={1000}>
                     <Grid item xs={6}>
-                        <DataTextField fieldId="password2" fieldLabel="Re-enter Password" type="password" />
+                        <PasswordField fieldId="password2" fieldLabel="Re-enter Password" />
                     </Grid>
                 </Grow> : null}
         </Grid>

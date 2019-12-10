@@ -1,4 +1,5 @@
-import { Checkbox, FormControlLabel, TextField } from '@material-ui/core';
+import { Checkbox, FormControlLabel, TextField, Input, FormControl, InputLabel, InputAdornment, IconButton } from '@material-ui/core';
+import { Visibility, VisibilityOff } from '@material-ui/icons';
 import 'date-fns';
 import React from 'react';
 import { RegistrationContext } from './Registration';
@@ -11,6 +12,33 @@ export function DataTextField(props) {
         <TextField id={fieldId} name={fieldId} label={fieldLabel} value={data[fieldId]} onChange={handleChange} fullWidth required {...rest}>
             {children}
         </TextField>
+    );
+}
+
+export function PasswordField(props) {
+    const { fieldId, fieldLabel, children, ...rest } = props;
+    const { data, setDataField } = React.useContext(RegistrationContext);
+    const [passwordVisible, setPasswordVisible] = React.useState(false);
+    const handleChange = event => setDataField(fieldId, event.target.value);
+    return (
+        <FormControl>
+            <InputLabel htmlFor={fieldId}>{fieldLabel}</InputLabel>
+            <Input id={fieldId} name={fieldId} value={data[fieldId]} onChange={handleChange} fullWidth required {...rest}
+                type={passwordVisible ? "text" : "password"}
+                endAdornment={
+                    <InputAdornment position="end">
+                        <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={() => setPasswordVisible(!passwordVisible)}
+                            onMouseDown={event => event.preventDefault()}
+                        >
+                            {passwordVisible ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                    </InputAdornment>
+                }>
+                {children}
+            </Input>
+        </FormControl>
     );
 }
 
