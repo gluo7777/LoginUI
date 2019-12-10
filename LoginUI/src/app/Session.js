@@ -29,6 +29,8 @@ class TimeoutModal extends React.Component {
         };
         this.endSession = this.endSession.bind(this);
         this.resetSession = this.resetSession.bind(this);
+        this.resetTimer = this.resetTimer.bind(this);
+        this.isOpen = this.isOpen.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -97,11 +99,25 @@ class TimeoutModal extends React.Component {
         });
     }
 
-    render() {
+    resetTimer() {
+        if (!this.isOpen()) {
+            this.resetSession();
+        }
+    }
+
+    isOpen() {
         const isAuth = this.props.context.app.authenticated;
         const isTimeAlmostUp = this.state.remainingTime <= TIME_LEFT_TO_DISPLAY;
-        return <div>
-            <Dialog onClose={this.handleClose} aria-labelledby="alert-dialog-title" open={isAuth && isTimeAlmostUp}>
+        return isAuth && isTimeAlmostUp;
+    }
+
+    render() {
+        return <div
+            onClick={this.resetTimer}
+            onMouseMove={this.resetTimer}
+            onScroll={this.resetTimer}
+        >
+            <Dialog onClose={this.handleClose} aria-labelledby="alert-dialog-title" open={this.isOpen()}>
                 <DialogTitle id="alert-dialog-title">Your session is about to expire due to inactivity.</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">Would you like to remain logged in?</DialogContentText>
