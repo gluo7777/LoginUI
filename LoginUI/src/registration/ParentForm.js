@@ -57,7 +57,7 @@ export function ParentForm() {
     const forms = [
         { label: 'Personal Information', form: <PersonalForm {...validationMethods} /> },
         { label: 'Account Information', form: <AccountForm {...validationMethods} /> },
-        { label: 'Finish and Review', form: <ReviewForm {...validationMethods} /> }
+        { label: 'Finish and Review', form: <ReviewForm {...validationMethods} errors={errors} errorTexts={errorTexts} /> }
     ];
     // validate when each page before clicking next
     const handleStepChange = (diff) => async () => {

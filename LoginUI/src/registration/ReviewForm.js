@@ -7,11 +7,16 @@ import { RegistrationContext } from './Registration';
  * - add field legend
  * - add edit under each section that will go back to that page
  */
-export function ReviewForm() {
+export function ReviewForm({ errors, errorTexts }) {
     const { data } = React.useContext(RegistrationContext);
-    const ReviewField = (props) => (<Grid item xs={props.xs || 6}>
-        <TextField variant="outlined" type={props.type || 'text'} id={`${props.field}Review`} name={`${props.field}Review`} label={props.label} fullWidth={props.fullWidth || false} value={data[props.field] || ''} disabled />
-    </Grid>);
+    const ReviewField = (props) => (
+        <Grid item xs={props.xs || 6}>
+            <TextField variant="outlined" type={props.type || 'text'}
+                id={`${props.field}Review`} name={`${props.field}Review`} label={props.label}
+                fullWidth={props.fullWidth || false} value={data[props.field] || ''} disabled
+                error={errors[props.field]} helperText={errorTexts[props.field]}
+            />
+        </Grid>);
     const ReviewHeading = (props) => (<Grid item xs={12} container justify="flex-start" spacing={2}>
         <Grid item>
             <Typography variant="h6" component="h2">{props.children}</Typography>

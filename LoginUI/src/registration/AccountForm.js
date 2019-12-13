@@ -4,7 +4,7 @@ import { DataTextField, isBlank, PasswordField } from './FormComponents';
 import DATA from './data';
 import { RegistrationContext } from './Registration';
 
-// add an errorcount from parent
+// TODO: add an errorcount from parent
 export function AccountForm(props) {
     const { data } = React.useContext(RegistrationContext);
     const { hasError, hasErrorText, setErrorAndText } = props;
