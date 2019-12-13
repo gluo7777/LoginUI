@@ -10,7 +10,6 @@ export function AccountForm(props) {
     const { hasError, hasErrorText, setErrorAndText } = props;
     return (<Grid container spacing={1} justify="space-between">
         <Grid item xs={6}>
-            {/* TODO: check if username exists */}
             <DataTextField fieldId="username" fieldLabel="Username"
                 error={hasError("username")}
                 helperText={hasErrorText("username")}
