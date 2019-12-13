@@ -1,6 +1,6 @@
 import { Grid } from '@material-ui/core';
 import React from 'react';
-import { DataCheckBox, DataTextField } from './common';
+import { DataCheckBox, DataTextField } from './FormComponents';
 import DATA from './data';
 
 export function PersonalForm() {

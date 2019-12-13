@@ -3,21 +3,11 @@ import 'date-fns';
 import React, { useState } from 'react';
 import DATA from './data';
 import { ParentForm } from './ParentForm';
-
 const DEFAULT_VALUES = DATA.fields.placeholders;
 
+// TODO: move validation logic to state of each form and reference in here via props
 export default function Registration() {
-    const validations = {};
-    for (let key in DEFAULT_VALUES) {
-        validations[key] = {
-            error: false
-            , checkForErrorMsg: () => null
-        };
-    }
-    const [data, setData] = useState({
-        ...DEFAULT_VALUES
-        , validations: validations
-    });
+    const [data, setData] = useState(DEFAULT_VALUES);
     const setDataField = (key, value) => setData({
         ...data,
         [key]: value,

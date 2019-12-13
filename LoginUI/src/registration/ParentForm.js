@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import * as Client from '../http/Client';
 import { AccountForm } from './AccountForm';
-import { buildAccountInfoRequest } from './common';
+import { buildAccountInfoRequest } from './FormComponents';
 import { PersonalForm } from './PersonalForm';
 import { RegistrationContext, useStyles } from './Registration';
 import { ReviewForm } from './ReviewForm';
@@ -12,6 +12,40 @@ export function ParentForm() {
     const { data } = React.useContext(RegistrationContext);
     const [step, setStep] = useState(0);
     const [action, setAction] = useState('register');
+    const [errors, setErrors] = React.useState({});
+    const [errorTexts, setErrorTexts] = React.useState({});
+    const validationMethods = {
+        hasError: (field) => {
+            let error = errors[field];
+            return error !== undefined ? error : false;
+        },
+        hasErrorText: (field) => {
+            let text = errorTexts[field];
+            return text !== undefined ? text : "";
+        },
+        setErrorAndText: (field, isValid, text) => {
+            if (isValid) {
+                setErrors({
+                    ...errors
+                    , [field]: false
+                });
+                setErrorTexts({
+                    ...errorTexts
+                    , [field]: ""
+                })
+            } else {
+                setErrors({
+                    ...errors
+                    , [field]: true
+                });
+                setErrorTexts({
+                    ...errorTexts
+                    , [field]: text
+                })
+            }
+        }
+    };
+
     if (action === 'login') {
         return <Route>
             <Redirect to={{
@@ -21,9 +55,9 @@ export function ParentForm() {
         </Route>;
     }
     const forms = [
-        { label: 'Personal Information', form: <PersonalForm /> },
-        { label: 'Account Information', form: <AccountForm /> },
-        { label: 'Finish and Review', form: <ReviewForm /> }
+        { label: 'Personal Information', form: <PersonalForm {...validationMethods} /> },
+        { label: 'Account Information', form: <AccountForm {...validationMethods} /> },
+        { label: 'Finish and Review', form: <ReviewForm {...validationMethods} /> }
     ];
     // validate when each page before clicking next
     const handleStepChange = (diff) => async () => {

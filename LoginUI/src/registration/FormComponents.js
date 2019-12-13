@@ -1,29 +1,40 @@
-import { Checkbox, FormControlLabel, TextField, Input, FormControl, InputLabel, InputAdornment, IconButton } from '@material-ui/core';
+import { Checkbox, FormControlLabel, TextField, Input, FormControl, InputLabel, InputAdornment, IconButton, FormHelperText } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import 'date-fns';
 import React from 'react';
 import { RegistrationContext } from './Registration';
 
-// TODO: add validation in onChange?
-// validate immediately vs when next is clicked
 export function DataTextField(props) {
-    const { fieldId, fieldLabel, children, ...rest } = props;
+    const { fieldId, fieldLabel, children, error, onChange, ...rest } = props;
     const { data, setDataField } = React.useContext(RegistrationContext);
-    const handleChange = event => setDataField(fieldId, event.target.value);
+    const handleChange = event => {
+        setDataField(fieldId, event.target.value);
+        if (onChange) {
+            onChange(event.target.value);
+        }
+    }
     return (
-        <TextField id={fieldId} name={fieldId} label={fieldLabel} value={data[fieldId]} onChange={handleChange} fullWidth required {...rest}>
+        <TextField
+            id={fieldId} name={fieldId} label={fieldLabel} value={data[fieldId]}
+            onChange={handleChange} fullWidth required error={error || false} {...rest}
+        >
             {children}
         </TextField>
     );
 }
 
 export function PasswordField(props) {
-    const { fieldId, fieldLabel, children, ...rest } = props;
+    const { fieldId, fieldLabel, children, error, helperText, onChange, ...rest } = props;
     const { data, setDataField } = React.useContext(RegistrationContext);
     const [passwordVisible, setPasswordVisible] = React.useState(false);
-    const handleChange = event => setDataField(fieldId, event.target.value);
+    const handleChange = event => {
+        setDataField(fieldId, event.target.value);
+        if (onChange) {
+            onChange(event.target.value);
+        }
+    };
     return (
-        <FormControl>
+        <FormControl error={error || false}>
             <InputLabel htmlFor={fieldId}>{fieldLabel}</InputLabel>
             <Input id={fieldId} name={fieldId} value={data[fieldId]} onChange={handleChange} fullWidth required {...rest}
                 type={passwordVisible ? "text" : "password"}
@@ -40,6 +51,7 @@ export function PasswordField(props) {
                 }>
                 {children}
             </Input>
+            <FormHelperText>{helperText}</FormHelperText>
         </FormControl>
     );
 }
