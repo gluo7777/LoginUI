@@ -4,6 +4,8 @@ import 'date-fns';
 import React from 'react';
 import { RegistrationContext } from './Registration';
 
+// TODO: add validation in onChange?
+// validate immediately vs when next is clicked
 export function DataTextField(props) {
     const { fieldId, fieldLabel, children, ...rest } = props;
     const { data, setDataField } = React.useContext(RegistrationContext);

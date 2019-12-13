@@ -25,6 +25,7 @@ export function ParentForm() {
         { label: 'Account Information', form: <AccountForm /> },
         { label: 'Finish and Review', form: <ReviewForm /> }
     ];
+    // validate when each page before clicking next
     const handleStepChange = (diff) => async () => {
         const newStep = step + diff;
         if (newStep >= 0 && newStep < forms.length) {

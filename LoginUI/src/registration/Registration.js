@@ -4,8 +4,20 @@ import React, { useState } from 'react';
 import DATA from './data';
 import { ParentForm } from './ParentForm';
 
+const DEFAULT_VALUES = DATA.fields.placeholders;
+
 export default function Registration() {
-    const [data, setData] = useState(DATA.fields.placeholders);
+    const validations = {};
+    for (let key in DEFAULT_VALUES) {
+        validations[key] = {
+            error: false
+            , checkForErrorMsg: () => null
+        };
+    }
+    const [data, setData] = useState({
+        ...DEFAULT_VALUES
+        , validations: validations
+    });
     const setDataField = (key, value) => setData({
         ...data,
         [key]: value,

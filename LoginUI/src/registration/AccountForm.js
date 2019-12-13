@@ -9,6 +9,7 @@ export function AccountForm() {
     // const [passwordVisible, setPasswordVisible] = React.useState(false);
     return (<Grid container spacing={1} justify="space-between">
         <Grid item xs={6}>
+            {/* TODO: check if username exists */}
             <DataTextField fieldId="username" fieldLabel="Username" />
         </Grid>
         <Grid item xs={12} container spacing={1}>
