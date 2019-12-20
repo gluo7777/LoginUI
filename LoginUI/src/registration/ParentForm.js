@@ -12,8 +12,15 @@ import { makeStyles } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import ErrorIcon from '@material-ui/icons/Error';
 
+const parentStyles = makeStyles(theme => ({
+    stepLabel: {
+        cursor: 'pointer'
+    }
+}));
+
 export function ParentForm() {
     const classes = useStyles();
+    const parentClasses = parentStyles();
     const { data } = React.useContext(RegistrationContext);
     const [step, setStep] = useState(0);
     const [action, setAction] = useState('register');
@@ -66,7 +73,15 @@ export function ParentForm() {
     const forms = [
         { label: 'Personal Information', form: <PersonalForm {...validationMethods} /> },
         { label: 'Account Information', form: <AccountForm {...validationMethods} /> },
-        { label: 'Finish and Review', form: <ReviewForm {...validationMethods} errors={errors} errorTexts={errorTexts} /> }
+        {
+            label: 'Finish and Review',
+            form: <ReviewForm {...validationMethods} errors={errors} errorTexts={errorTexts}
+                editActions={{
+                    personal: () => setStep(0)
+                    , account: () => setStep(1)
+                }}
+            />
+        }
     ];
     // validate when each page before clicking next
     const handleStepChange = (diff) => async () => {
@@ -109,8 +124,8 @@ export function ParentForm() {
             <Typography variant="h5" component="h1" className={classes.heading}>Registration</Typography>
             <Container>
                 <Stepper activeStep={step} className={classes.stepper}>
-                    {forms.map(form => <Step key={form.label} completed={false}>
-                        <StepLabel>{form.label}</StepLabel>
+                    {forms.map((form, i) => <Step key={i} completed={false}>
+                        <StepLabel className={parentClasses.stepLabel} onClick={() => setStep(i)}>{form.label}</StepLabel>
                     </Step>)}
                 </Stepper>
                 <ErrorSnackBar open={alert.open} message={alert.message} onClose={() => setAlert({ ...alert, open: false })} />

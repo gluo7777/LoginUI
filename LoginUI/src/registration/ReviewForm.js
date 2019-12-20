@@ -2,12 +2,7 @@ import { Button, Grid, TextField, Typography } from '@material-ui/core';
 import React from 'react';
 import { RegistrationContext } from './Registration';
 
-/**
- * @todo
- * - add field legend
- * - add edit under each section that will go back to that page
- */
-export function ReviewForm({ errors, errorTexts }) {
+export function ReviewForm({ errors, errorTexts, editActions }) {
     const { data } = React.useContext(RegistrationContext);
     const ReviewField = (props) => (
         <Grid item xs={props.xs || 6}>
@@ -26,7 +21,7 @@ export function ReviewForm({ errors, errorTexts }) {
         </Grid>
     </Grid>);
     return (<Grid container spacing={1} justify="flex-start">
-        <ReviewHeading>Personal Information</ReviewHeading>
+        <ReviewHeading onClick={editActions.personal}>Personal Information</ReviewHeading>
         <ReviewField field="firstName" label="First Name" fullWidth />
         <ReviewField field="lastName" label="Last Name" fullWidth />
         <ReviewField xs={4} field="gender" label="Gender" fullWidth />
@@ -39,7 +34,7 @@ export function ReviewForm({ errors, errorTexts }) {
         <ReviewField xd={3} field="zipcode" label="Zip Code" fullWidth />
         <ReviewField xd={12} field="email" label="Email" fullWidth />
         <ReviewField xd={12} field="phone" label="Phone" fullWidth />
-        <ReviewHeading>Account Information</ReviewHeading>
+        <ReviewHeading onClick={editActions.account}>Account Information</ReviewHeading>
         <ReviewField field="username" label="User Name" fullWidth />
         <ReviewField type="password" field="password2" label="Password" fullWidth />
         <ReviewField xs={12} field="question1" label="Question 1" fullWidth />

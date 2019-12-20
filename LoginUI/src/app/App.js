@@ -55,10 +55,11 @@ export function App() {
 
 class LoginRoute extends React.Component {
   static contextType = Configuration.GlobalContext;
-  async componentDidMount() {
-    const context = this.context;
-    await context.reauthenticate();
-  }
+  // TODO: double re-authenticate when redirecting from ProtectedRoute. Consider removing authenticate here
+  // async componentDidMount() {
+  //   const context = this.context;
+  //   await context.reauthenticate();
+  // }
   render() {
     const { redirectPath, ...rest } = this.props;
     const context = this.context;

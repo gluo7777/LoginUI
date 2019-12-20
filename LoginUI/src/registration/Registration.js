@@ -5,7 +5,6 @@ import DATA from './data';
 import { ParentForm } from './ParentForm';
 const DEFAULT_VALUES = DATA.fields.placeholders;
 
-// TODO: move validation logic to state of each form and reference in here via props
 export default function Registration() {
     const [data, setData] = useState(DEFAULT_VALUES);
     const setDataField = (key, value) => setData({

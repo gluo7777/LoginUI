@@ -39,7 +39,7 @@ export async function logout() {
 
         return res.status === 200;
     } catch (e) {
-        console.error("API Logout failed with following error: ", e.msg);
+        console.error("API Logout failed with following error: ", e);
     }
 }
 
@@ -84,7 +84,7 @@ export async function registerAccount(accountInfo) {
         });
         return res.status === 201;
     } catch (e) {
-        console.error("API Registration failed with following error: ", e.msg);
+        console.error("API Registration failed with following error: ", e);
     }
 
 }
