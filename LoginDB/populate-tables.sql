@@ -58,3 +58,10 @@ CREATE TEMPORARY TABLE temp_profiles (
 INSERT INTO profile.addresses(user_id,address_line_1,address_line_2,room_number,city,state,zipcode,phone_number) SELECT a.id,b.address_line_1,b.address_line_2,b.room_number,b.city,b.state,b.zipcode,b.phone_number FROM security.users a JOIN temp_profiles b ON a.username = b.username;
 
 INSERT INTO profile.preferences(user_id,newsletter) SELECT a.id,b.newsletter FROM security.users a JOIN temp_profiles b ON a.username = b.username;
+
+-- Verify
+SELECT COUNT(*) "Users" FROM security.users;
+SELECT COUNT(*) "Authorities" FROM security.authorities;
+SELECT COUNT(*) "Questions" FROM security.questions;
+SELECT COUNT(*) "Addresses" FROM profile.addresses;
+SELECT COUNT(*) "Preferences" FROM profile.preferences;
