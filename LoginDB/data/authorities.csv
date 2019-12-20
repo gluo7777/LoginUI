@@ -1,0 +1,5 @@
+username,authority
+admin1,ROLE_ADMIN
+admin1,ROLE_USER
+user1,ROLE_USER
+user2,ROLE_USER
