@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "Prototypes"
+		},
+		{
+			"path": "LoginDB"
 		}
 	],
 	"settings": {

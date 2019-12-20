@@ -1,0 +1,4 @@
+username,password,enabled,first_name,last_name,email,gender,date_of_birth
+admin1,admin1,TRUE,Admin,Admin,admin1@admin.com,male,1/1/2000
+user1,user1,TRUE,User,User,user1@user.com,male,1/1/2000
+user2,user2,TRUE,User,User,user2@user.com,male,1/1/2000

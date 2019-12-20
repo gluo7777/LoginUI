@@ -1,0 +1,4 @@
+username,address_line_1,address_line_2,room_number,city,state,zipcode,phone_number,newsletter
+admin1,9999 Admin Town,,# 99,Adminity,Texas,99999-9999,9999999999,FALSE
+user1,9999 User Town,,# 99,Userity,Texas,99999-9999,9999999999,FALSE
+user2,9999 User Town,,# 99,Userity,Texas,99999-9999,9999999999,FALSE
