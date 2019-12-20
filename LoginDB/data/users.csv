@@ -1,4 +1,4 @@
 username,password,enabled,first_name,last_name,email,gender,date_of_birth
-admin1,admin1,True,Admin,Admin,admin1@admin.com,male,1/1/2000
-user1,user1,True,User,User,user1@user.com,male,1/1/2000
-user2,user2,True,User,User,user2@user.com,male,1/1/2000
+admin1,$2a$10$/d.HY62OcsdMUT9ml/srperiNhiw3mqpwraQvoNELvIPpWE3FjL8.,True,Admin,Admin,admin1@admin.com,male,1/1/2000
+user1,$2a$10$3UakCT0HuD7uo/486D69KeKQmsUCuaXTdbSobbYX9893zLNjBAbxS,True,User,User,user1@user.com,male,1/1/2000
+user2,$2a$10$MOvwF3m0Y3man92t7kj2pehWSHxHZWrf5WOaQGNwV4TPcAr5ROhKC,True,User,User,user2@user.com,male,1/1/2000

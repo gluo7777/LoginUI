@@ -4,7 +4,7 @@ public class Rules {
     public static final String HAS_PREFIX = "hasRole('";
     public static final String HAS_SUFFIX = "')";
     public static final String ROLE_USER = "ROLE_USER";
-    public static final String ROLE_ADMIN = "ROLE_ADMIN ";
+    public static final String ROLE_ADMIN = "ROLE_ADMIN";
     public static final String HAS_ROLE_USER = HAS_PREFIX + ROLE_USER + HAS_SUFFIX;
     public static final String HAS_ROLE_ADMIN = HAS_PREFIX + ROLE_ADMIN + HAS_SUFFIX;
     public static final String RUN_AS_SUPER_USER = "RUN_AS_SUPER_USER";

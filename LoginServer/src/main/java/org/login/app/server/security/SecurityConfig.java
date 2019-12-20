@@ -35,12 +35,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public static final String API_ROLE = "USER";
 
     public static final String[] POST_WHITE_LIST = {API + "/registration", LOGIN_URL};
+    public static final String[] GET_WHITE_LIST = {"/utility/**"};
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().configurationSource(corsConfigurationSource())
                 .and().csrf().disable()
-                .authorizeRequests().antMatchers(HttpMethod.POST, POST_WHITE_LIST).permitAll()
+                .authorizeRequests().antMatchers(HttpMethod.GET, GET_WHITE_LIST).permitAll()
+                .and().authorizeRequests().antMatchers(HttpMethod.POST, POST_WHITE_LIST).permitAll()
                 .and().authorizeRequests().antMatchers(LOGOUT_URL).authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint())
             .and().authorizeRequests().antMatchers(API + "/**").hasRole(API_ROLE)

@@ -1,7 +1,7 @@
 username,question,answer,hint,case_sensitive,ignore_spaces
 admin1,In what county were you born?,Admination,Admination,TRUE,FALSE
-admin1,What is your oldest cousin''s first name?,Admination,Admination,TRUE,FALSE
+admin1,What is your oldest cousin's first name?,Admination,Admination,TRUE,FALSE
 user1,In what county were you born?,Useration,Useration,TRUE,FALSE
-user1,What is your oldest cousin''s first name?,Useration,Useration,TRUE,FALSE
+user1,What is your oldest cousin's first name?,Useration,Useration,TRUE,FALSE
 user2,In what county were you born?,Useration,Useration,TRUE,FALSE
-user2,What is your oldest cousin''s first name?,Useration,Useration,TRUE,FALSE
+user2,What is your oldest cousin's first name?,Useration,Useration,TRUE,FALSE
