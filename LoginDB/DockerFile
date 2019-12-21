@@ -1,0 +1,19 @@
+FROM postgres:11.5-alpine
+
+LABEL Author="William Luo"
+LABEL repo="https://www.github.com/gluo7777"
+
+# ENV POSTGRES_DB "loginapp"
+ENV POSTGRES_USER "loginadmin"
+ENV POSTGRES_PASSWORD "loginadmin"
+
+VOLUME [ "/var/lib/postgresql/data" ]
+
+# Scripts in this directory will be executed when container launches
+COPY *.sql /docker-entrypoint-initdb.d/
+COPY data /docker-entrypoint-initdb.d/data
+
+RUN echo "Contents of docker-entrypoint-initdb.d"
+RUN ls -alR /docker-entrypoint-initdb.d
+
+EXPOSE 5432
