@@ -1,14 +1,18 @@
 ### Variables ###
 ARG APP=/home/app
 
+
 ### Build Stage ###
 FROM maven:3.6-jdk-11-slim AS build
-COPY src ${APP}/src
-COPY pom.xml ${APP}
-RUN mvn -f ${APP}/pom.xml clean package
+WORKDIR /home/app
+RUN mkdir -p /home/app
+COPY pom.xml .
+RUN mvn -B -s /usr/share/maven/ref/settings-docker.xml dependency:resolve
+COPY src src
+RUN mvn -B -s /usr/share/maven/ref/settings-docker.xml clean package
 
 ### Package Stage ###
 FROM openjdk:11.0.5-jre AS package
-COPY --from=build ${APP}/target/server-*.jar /usr/local/lib/app.jar
+COPY --from=build /home/app/target/server-*.jar /usr/local/lib/app.jar
 EXPOSE 9090
 ENTRYPOINT [ "java", "-jar", "/usr/local/lib/app.jar"]
