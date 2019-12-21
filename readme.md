@@ -2,51 +2,53 @@
 
 ## Running
 
-### UI
+### Front End
 
 > cd ./LoginUI && npm start
 
 Go to http://frontend.login.com:3000
 
-### Database
+### Back End
 
-#### Initial Set Up
+#### General
 
-> ./LoginDB/setup.sh
+```bash
+# Build artifacts
+mvn -f LogServer/pom.xml clean package
+# Use docker-compose to build images, create containers, and run as services
+docker-compose up --rebuild
+```
+#### Database
 
-> ./LoginDB/create-tables.sh
+```bash
+cd LoginDB
+docker build -t postgres:v0 .
+docker run --rm -d --name lone_postgres -v lone_postgres:/var/lib/postgresql/data -p 5432:5432 postgres:v0
+```
 
-#### Start Database Server
+#### API
 
-> docker start "local-postgres11.5-database"
+> mvn spring-boot:run -Dspring-boot.run.arguments=--spring.profiles.active=standalone
 
-#### To run CLI to execute queries
+## Testing
 
-> docker exec -it "local-postgres11.5-database" psql -U postgres -d loginapp
+### Configure Hosts
 
-### API
-
-> mvn -f ./LoginServer/pom.xml spring-boot:run 
-
-Optional: `-Dspring-boot.run.arguments=--spring.profiles.active=local`
-
-> curl -v -i -X GET http://backend.login.com:9090/api
-
-## App Interaction
+1. Run Powershell as admin
+2. .\notepad.exe c:\windows\system32\drivers\etc\hosts
+3. Add the following lines:
+```
+127.0.0.1 frontend.login.com
+127.0.0.1 backend.login.com
+```
 
 ### Using Curl to test with random user-agent
 
 ```bash
 # Login
-curl -v -i -c cookies -H "Host:frontend.login.com:3000" -X POST -F 'username=williamluo7777' -F 'password=abc123' http://backend.login.com:9090/app/login
+curl -v -i -c cookies -H "Host:http://frontend.login.com:3000" -X POST -F 'username=admin1' -F 'password=admin1' http://localhost/app/login
 # Generate CSRF Token
 # Authenticated Requests
-curl -v -i -b cookies -H "Host:frontend.login.com:3000" -X GET http://backend.login.com:9090/api/users/2
+curl -v -i -b cookies -H "Host:http://frontend.login.com:3000" -X GET http://localhost/api/users/2
 # Logout
 ```
-
-# Login UI
-
-## Running
-
-> npm start

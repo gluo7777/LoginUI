@@ -18,15 +18,10 @@ spring:
   datasource:
     platform: postgres
     # host is name of db service in docker-compose
-    url: jdbc:postgresql://postgres:5432/loginapp
+    host: postgres
+    url: jdbc:postgresql://${spring.datasource.host}:5432/loginapp
     username: loginapp
     password: supersecretlogin
-#  jpa:
-#    properties:
-#      hibernate:
-#        jdbc:
-#          lob:
-#            non_contextual_creation: true
 
 logging:
   level:
@@ -36,3 +31,9 @@ logging:
 error:
   whitelabel:
     enabled: false
+
+---
+spring:
+  profile: standalone
+  datasource:
+    host: localhost 
