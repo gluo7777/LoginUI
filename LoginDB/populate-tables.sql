@@ -13,8 +13,8 @@ ALTER SEQUENCE profile.addresses_id_seq RESTART WITH 1;
 ALTER SEQUENCE profile.preferences_id_seq RESTART WITH 1;
 
 -- Add Users
--- COPY security.users FROM 'data/users.csv' WITH (FORMAT csv, DELIMITER ',', NULL '');
-\copy security.users(username,password,enabled,first_name,last_name,email,gender,date_of_birth) FROM 'data/users.csv' DELIMITER ',' NULL '' HEADER CSV;
+-- COPY security.users FROM '/var/temp/data/users.csv' WITH (FORMAT csv, DELIMITER ',', NULL '');
+\copy security.users(username,password,enabled,first_name,last_name,email,gender,date_of_birth) FROM '/var/temp/data/users.csv' DELIMITER ',' NULL '' HEADER CSV;
 
 -- Add Authorities for each User
 CREATE TEMPORARY TABLE temp_authorities (
@@ -22,7 +22,7 @@ CREATE TEMPORARY TABLE temp_authorities (
     ,authority TEXT NOT NULL
 );
 
-\copy temp_authorities(username,authority) FROM 'data/authorities.csv' DELIMITER ',' NULL '' HEADER CSV;
+\copy temp_authorities(username,authority) FROM '/var/temp/data/authorities.csv' DELIMITER ',' NULL '' HEADER CSV;
 
 INSERT INTO security.authorities(user_id,authority) SELECT id,authority FROM security.users a JOIN temp_authorities b ON a.username = b.username;
 
@@ -36,7 +36,7 @@ CREATE TEMPORARY TABLE temp_questions (
     ,ignore_spaces BOOLEAN DEFAULT(true)
 );
 
-\copy temp_questions FROM 'data/questions.csv' DELIMITER ',' NULL '' HEADER CSV;
+\copy temp_questions FROM '/var/temp/data/questions.csv' DELIMITER ',' NULL '' HEADER CSV;
 
 INSERT INTO security.questions(user_id,question,answer,hint,case_sensitive,ignore_spaces) SELECT a.id,b.question,b.answer,b.hint,b.case_sensitive,b.ignore_spaces FROM security.users a JOIN temp_questions b ON a.username = b.username;
 
@@ -53,7 +53,7 @@ CREATE TEMPORARY TABLE temp_profiles (
     ,newsletter BOOLEAN
 );
 
-\copy temp_profiles FROM 'data/profiles.csv' DELIMITER ',' NULL '' HEADER CSV;
+\copy temp_profiles FROM '/var/temp/data/profiles.csv' DELIMITER ',' NULL '' HEADER CSV;
 
 INSERT INTO profile.addresses(user_id,address_line_1,address_line_2,room_number,city,state,zipcode,phone_number) SELECT a.id,b.address_line_1,b.address_line_2,b.room_number,b.city,b.state,b.zipcode,b.phone_number FROM security.users a JOIN temp_profiles b ON a.username = b.username;
 

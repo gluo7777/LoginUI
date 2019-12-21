@@ -1,3 +1,5 @@
+\c loginapp;
+
 CREATE SCHEMA IF NOT EXISTS security;
 
 CREATE TABLE IF NOT EXISTS security.users(
