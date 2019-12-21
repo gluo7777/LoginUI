@@ -1,7 +1,14 @@
-FROM openjdk:11.0.5-jre
+### Variables ###
+ARG APP=/home/app
 
-COPY target/server-*.jar /app.jar
+### Build Stage ###
+FROM maven:3.6-jdk-11-slim AS build
+COPY src ${APP}/src
+COPY pom.xml ${APP}
+RUN mvn -f ${APP}/pom.xml clean package
 
+### Package Stage ###
+FROM openjdk:11.0.5-jre AS package
+COPY --from=build ${APP}/target/server-*.jar /usr/local/lib/app.jar
 EXPOSE 9090
-
-ENTRYPOINT [ "java", "-jar", "/app.jar" ]
+ENTRYPOINT [ "java", "-jar", "/usr/local/lib/app.jar"]
