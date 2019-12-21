@@ -17,8 +17,7 @@ spring:
       base-path: /api
   datasource:
     platform: postgres
-    # host is name of db service in docker-compose
-    host: postgres
+    host: postgres # Host is name of docker service
     url: jdbc:postgresql://${spring.datasource.host}:5432/loginapp
     username: loginapp
     password: supersecretlogin
@@ -28,8 +27,7 @@ spring:
       flush-mode: on-save
       namespace: loginapp:session
   redis:
-    # TODO: change to redis network host
-    host: 127.0.0.1
+    host: redis # Host is name of docker service
     port: 6379
     database: 0
     timeout: 5000
@@ -48,9 +46,11 @@ error:
 
 ---
 spring:
-  profile: standalone
+  profiles: standalone
   datasource:
     host: localhost 
+  redis:
+    host: 127.0.0.1
 
 server:
   port: 80

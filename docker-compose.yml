@@ -2,18 +2,29 @@ version: '3'
 services: 
     # TODO: Force mvn clean package before building dockerfile
     login-server:
-        image: loginserver:v0
+        image: loginserver:v1
         build: 
             context: ./LoginServer
             dockerfile: DockerFile
         networks: 
+            - service
             - backend
         ports: 
             - "80:9090"
         depends_on: 
+            - redis
             - postgres
+    redis:
+        image: redis:v1
+        build:
+            context: ./LoginCache
+            dockerfile: DockerFile
+        networks: 
+            - service
+        volumes: 
+            - cache:/data
     postgres:
-        image: postgres:v0
+        image: postgres:v1
         build: 
             context: ./LoginDB
             dockerfile: DockerFile
@@ -23,13 +34,13 @@ services:
             - postgres:/var/lib/postgresql/data
         networks: 
             - backend
-        ports: 
-            - "5432:5432"
         environment: 
             POSTGRES_DB: loginapp
             POSTGRES_USER: loginapp
             POSTGRES_PASS: supersecretlogin
 volumes: 
     postgres:
+    cache:
 networks: 
     backend:
+    service:
