@@ -1,7 +1,7 @@
 // Code for consuming API
 
 const LOGIN_API_URL = process.env.LOGIN_API_URL || 'http://backend.login.com';
-const LOGIN_API_PORT = process.env.LOGIN_API_PORT || '9090';
+const LOGIN_API_PORT = process.env.LOGIN_API_PORT || '80';
 const LOGIN_API = LOGIN_API_URL + ":" + LOGIN_API_PORT;
 
 export async function login(username, password) {
