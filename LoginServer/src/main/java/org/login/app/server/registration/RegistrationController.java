@@ -31,12 +31,9 @@ public class RegistrationController {
     private AuthorityRepository authorityRepository;
 
     @Autowired
-    private SecurityQuestionRepository securityQuestionRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Secured({Rules.ROLE_ANONYMOUS, Rules.RUN_AS_SUPER_USER})
+    @Secured({Rules.ROLE_ANONYMOUS,Rules.ROLE_ADMIN,Rules.ROLE_USER, Rules.RUN_AS_SUPER_USER})
     @PostMapping(path = "/registration", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createAccount(@Valid @RequestBody User user){
         User foundUser = userRepository.findByUsername(user.getUsername()).orElse(null);

@@ -28,7 +28,7 @@ docker run --rm -d --name lone_postgres -v lone_postgres:/var/lib/postgresql/dat
 
 #### API
 
-> mvn spring-boot:run -Dspring-boot.run.arguments=--spring.profiles.active=standalone
+> mvn -f LoginServer/pom.xml spring-boot:run -D"spring-boot.run.arguments"="--spring.profiles.active=standalone"
 
 ## Testing
 
