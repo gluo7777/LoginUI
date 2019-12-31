@@ -1,6 +1,5 @@
 version: '3'
 services: 
-    # TODO: Force mvn clean package before building dockerfile
     login-server:
         image: loginserver:v1
         build: 
