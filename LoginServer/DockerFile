@@ -1,18 +1,30 @@
-### Variables ###
-ARG APP=/home/app
-
+### Build Variables ###
+ARG WORKDIR=/home/app
+ARG SETTING=${WORKDIR}/settings-docker.xml
+ARG PLUGIN_VERSION=3.1.0
+ARG PORT=9090
 
 ### Build Stage ###
 FROM maven:3.6-jdk-11-slim AS build
-WORKDIR /home/app
-RUN mkdir -p /home/app
-COPY pom.xml .
-RUN mvn -B -s /usr/share/maven/ref/settings-docker.xml dependency:resolve
+ARG WORKDIR
+ARG SETTING
+ARG PLUGIN_VERSION
+
+WORKDIR ${WORKDIR}
+
+### Cache Build Dependencies ###
+COPY pom.xml settings-docker.xml ${WORKDIR}/
+RUN mvn -B -s ${SETTING} org.apache.maven.plugins:maven-dependency-plugin:${PLUGIN_VERSION}:go-offline
+
+### Build Source Code ###
 COPY src src
-RUN mvn -B -s /usr/share/maven/ref/settings-docker.xml clean package
+RUN mvn -B -s ${SETTING} --offline clean package
 
 ### Package Stage ###
 FROM openjdk:11.0.5-jre AS package
-COPY --from=build /home/app/target/server-*.jar /usr/local/lib/app.jar
-EXPOSE 9090
+ARG WORKDIR
+ARG PORT
+
+COPY --from=build ${WORKDIR}/target/server-*.jar /usr/local/lib/app.jar
+EXPOSE ${PORT}
 ENTRYPOINT [ "java", "-jar", "/usr/local/lib/app.jar"]
