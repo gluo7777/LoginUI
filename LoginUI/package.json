@@ -34,5 +34,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "create-react-app": "^3.3.0",
+    "serve": "^11.3.0"
   }
 }
