@@ -101,7 +101,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://frontend.login.com:3000"));
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://frontend.login.com:3000"
+            ,"https://frontend.login.com:3000"
+            ,"http://frontend.login.com:80"
+            ,"https://frontend.login.com:80"
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET","POST","DELETE","PUT"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
