@@ -1,0 +1,41 @@
+version: "2"
+
+services:
+  reverseproxy:
+    image: reverseproxy
+    build: 
+      context: .
+      dockerfile: ReverseProxy.DockerFile
+    ports:
+      - 9090:8080
+      - 9091:8081
+      - 8082:8082
+    restart: always
+    networks: 
+      - nginx
+  nginx:
+    depends_on:
+      - reverseproxy
+    image: nginx:alpine
+    restart: always
+    networks: 
+      - nginx
+  apache:
+    depends_on:
+      - reverseproxy
+    image: httpd:alpine
+    restart: always
+    networks: 
+      - nginx
+  loginui:
+    depends_on: 
+      - reverseproxy
+    image: loginuiproto:v1
+    build: 
+      context: ../UI
+      dockerfile: Dockerfile
+    restart: always
+    networks: 
+      - nginx
+networks: 
+  nginx:
