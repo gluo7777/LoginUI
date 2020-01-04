@@ -1,15 +1,27 @@
 version: '3'
 services:
-    login-ui:
+    reverseproxy:
+        image: reverseproxy:v1
+        build:
+            context: ./WebServer
+            dockerfile: DockerFile
+        ports: 
+            - "80:80"
+            - "443:443"
+        networks: 
+            - reverseproxy
+        restart: always
+    loginui:
         image: loginui:v1
         build:
             context: ./LoginUI
             dockerfile: DockerFile
-        ports: 
-            - "80:3000"
         depends_on: 
-            - login-server
-    login-server:
+            - reverseproxy
+            - loginserver
+        networks: 
+            - reverseproxy
+    loginserver:
         image: loginserver:v1
         build: 
             context: ./LoginServer
@@ -17,9 +29,9 @@ services:
         networks: 
             - service
             - backend
-        ports: 
-            - "80:9090"
+            - reverseproxy
         depends_on: 
+            - reverseproxy
             - redis
             - postgres
     redis:
@@ -52,3 +64,4 @@ volumes:
 networks: 
     backend:
     service:
+    reverseproxy:
