@@ -1,0 +1,16 @@
+##
+# docker build . -t nginx:v1
+# docker run --rm --name nginx -p 80:80 nginx:v1
+##
+FROM nginx:1.17.1-alpine
+
+ARG NGINX=/etc/nginx
+ARG CONF=${NGINX}/conf.d
+
+COPY nginx.conf ${NGINX}
+COPY loginapp.com.conf ${CONF}
+RUN nginx -t
+
+EXPOSE 80
+
+# CMD ["nginx", "-g" ,"'daemon off'","\;"]
