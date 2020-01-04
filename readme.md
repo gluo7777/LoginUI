@@ -1,54 +1,19 @@
-# Login Server
+## Overview
 
-## Running
+LoginApp demonstrates the deployment of a full stack application via container orchestration (docker compose or kubernetes)
 
-### Front End
+## Stack
 
-> cd ./LoginUI && npm start
+- Single Page App (React, React Router, Material UI)
+- Authorization Server and API (Spring Boot, Spring Security)
+- Storage (Postgres)
+- Caching and Session Management (Redis)
+- Reverse Proxy and Load Balancer (Nginx)
 
-Go to http://frontend.login.com:3000
+## Running (Locally)
 
-### Back End
+1. Add `127.0.0.1 loginapp.com` to hosts file
 
-#### General
+2. Run `docker-compose up --build`
 
-```bash
-# Build artifacts
-mvn -f LogServer/pom.xml clean package
-# Use docker-compose to build images, create containers, and run as services
-docker-compose up --rebuild
-```
-#### Database
-
-```bash
-cd LoginDB
-docker build -t postgres:v0 .
-docker run --rm -d --name lone_postgres -v lone_postgres:/var/lib/postgresql/data -p 5432:5432 postgres:v0
-```
-
-#### API
-
-> mvn -f LoginServer/pom.xml spring-boot:run -D"spring-boot.run.arguments"="--spring.profiles.active=standalone"
-
-## Testing
-
-### Configure Hosts
-
-1. Run Powershell as admin
-2. .\notepad.exe c:\windows\system32\drivers\etc\hosts
-3. Add the following lines:
-```
-127.0.0.1 frontend.login.com
-127.0.0.1 backend.login.com
-```
-
-### Using Curl to test with random user-agent
-
-```bash
-# Login
-curl -v -i -c cookies -H "Host:http://frontend.login.com:3000" -X POST -F 'username=admin1' -F 'password=admin1' http://localhost/app/login
-# Generate CSRF Token
-# Authenticated Requests
-curl -v -i -b cookies -H "Host:http://frontend.login.com:3000" -X GET http://localhost/api/users/2
-# Logout
-```
+## Deployment
