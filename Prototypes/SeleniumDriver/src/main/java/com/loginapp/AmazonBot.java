@@ -1,18 +1,13 @@
 package com.loginapp;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * AmazonBot
@@ -25,7 +20,6 @@ public class AmazonBot {
     public AmazonBot() {
         this.config = new ChromeConfig(20);
     }
-    
 
     private WebDriver driver() {
         return this.config.getDriver();
@@ -71,7 +65,7 @@ public class AmazonBot {
             WebElement nextLink = driver().findElement(By.partialLinkText("Next"));
             nextLink.click();
             return true;
-        }catch(NoSuchElementException e){
+        }catch(NoSuchElementException|ElementNotInteractableException e){
             return false;
         }
     }
@@ -81,7 +75,11 @@ public class AmazonBot {
     }
 
     public void closeWindow() {
-        this.config.getDriver().close();
+        driver().close();
+    }
+
+    public void stopDriver(){
+        driver().quit();
     }
 
     // testing
@@ -98,6 +96,7 @@ public class AmazonBot {
             }
         }finally{
             bot.closeWindow();
+            bot.stopDriver();
         }
     }
 }

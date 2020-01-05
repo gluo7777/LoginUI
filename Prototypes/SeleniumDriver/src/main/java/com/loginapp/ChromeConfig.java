@@ -22,14 +22,15 @@ public class ChromeConfig implements DriverConfig{
 
     public ChromeConfig(int waitSeconds){
         ChromeOptions options = new ChromeOptions();
-        options.setBinary(Paths.get("webdrivers", "chromedriver.exe").toFile());
         // https://peter.sh/experiments/chromium-command-line-switches/
         // chromedriver --help
-        options.addArguments("start-maximized");
-        options.addArguments("allow-insecure-localhost");
-        options.addArguments("headless");
-        options.addArguments("verbose");
-        options.addArguments("readable-timestamp");
+        options.addArguments("--start-maximized");
+        options.addArguments("--headless");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-infobars");
+        options.addArguments("--disable-extensions");
+        options.addArguments("--verbose");
         driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(waitSeconds, TimeUnit.SECONDS);
     }
