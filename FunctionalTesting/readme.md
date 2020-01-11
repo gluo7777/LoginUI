@@ -1,0 +1,1 @@
+Use selenium to execute browser testing. Combine with testing frameworks to produce reports.
