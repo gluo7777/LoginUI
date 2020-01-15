@@ -28,30 +28,26 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    public static final String APP = "/app";
-    public static final String API = "/api";
-    public static final String LOGIN_URL = APP + "/login";
-    public static final String LOGOUT_URL = APP + "/logout";
     public static final String API_ROLE = "USER";
 
-    public static final String[] POST_WHITE_LIST = {API + "/registration", LOGIN_URL};
-    public static final String[] GET_WHITE_LIST = {"/utility/**"};
+    @Autowired
+    private Endpoints endpoints;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().configurationSource(corsConfigurationSource())
                 .and().csrf().disable()
-                .authorizeRequests().antMatchers(HttpMethod.GET, GET_WHITE_LIST).permitAll()
-                .and().authorizeRequests().antMatchers(HttpMethod.POST, POST_WHITE_LIST).permitAll()
-                .and().authorizeRequests().antMatchers(LOGOUT_URL).authenticated()
+                .authorizeRequests().antMatchers(HttpMethod.GET, endpoints.getGetWhiteList()).permitAll()
+                .and().authorizeRequests().antMatchers(HttpMethod.POST, endpoints.getPostWhiteList()).permitAll()
+                .and().authorizeRequests().antMatchers(endpoints.getLogout()).authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint())
-            .and().authorizeRequests().antMatchers(API + "/**").hasRole(API_ROLE)
+            .and().authorizeRequests().antMatchers(endpoints.getApi() + "/**").hasRole(API_ROLE)
                 .and().authorizeRequests().anyRequest().authenticated()
             .and().formLogin()
-                .loginProcessingUrl(LOGIN_URL)
+                .loginProcessingUrl(endpoints.getLogin())
                 .successHandler(restSavedRequestAwareAuthenticationSuccessHandler())
                 .failureHandler(new SimpleUrlAuthenticationFailureHandler())
-            .and().logout().logoutUrl(LOGOUT_URL)
+            .and().logout().logoutUrl(endpoints.getLogout())
                 .logoutSuccessHandler((request, response, authentication) -> {
                     if (response.isCommitted()) return;
                     else if (authentication != null && authentication.isAuthenticated()) response.setStatus(HttpServletResponse.SC_OK);
@@ -112,8 +108,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList("Set-Cookie"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration(API + "/**", configuration);
-        source.registerCorsConfiguration(APP + "/**", configuration);
+        source.registerCorsConfiguration(endpoints.getApi() + "/**", configuration);
+        source.registerCorsConfiguration(endpoints.getApp() + "/**", configuration);
         return source;
     }
 

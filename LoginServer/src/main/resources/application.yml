@@ -44,20 +44,13 @@ error:
   whitelabel:
     enabled: false
 
----
-spring:
-  profiles: standalone
-  datasource:
-    host: localhost 
-  redis:
-    host: 127.0.0.1
-
-server:
-  port: 80
-
-logging:
-  level:
-    org:
-      springframework:
-        security: DEBUG
-        web: DEBUG
+endpoints:
+  app: /app
+  api: ${spring.data.rest.base-path}
+  login: ${endpoints.app}/login
+  logout: ${endpoints.app}/logout
+  get-white-list:
+    - /error
+  post-white-list:
+    - ${endpoints.api}/registration
+    - ${endpoints.login}

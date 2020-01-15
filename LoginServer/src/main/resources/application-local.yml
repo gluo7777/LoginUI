@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    platform: h2
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;INIT=CREATE SCHEMA IF NOT EXISTS security\;CREATE SCHEMA IF NOT EXISTS profile;
+    username: sa
+    password: sa
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  session:
+    store-type: JDBC
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        web: DEBUG
+
+endpoints:
+  get-white-list:
+    - ${spring.h2.console.path}/**
+    - /utility/**
+  post-white-list:
+    - ${endpoints.api}/registration
+    - ${endpoints.login}
+    - ${spring.h2.console.path}/**

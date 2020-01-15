@@ -18,7 +18,7 @@ RUN mvn -B -s ${SETTING} org.apache.maven.plugins:maven-dependency-plugin:${PLUG
 
 ### Build Source Code ###
 COPY src src
-RUN mvn -B -s ${SETTING} --offline clean package
+RUN mvn -B -s ${SETTING} -DskipTests=true --offline clean package
 
 ### Package Stage ###
 FROM openjdk:11.0.5-jre AS package
