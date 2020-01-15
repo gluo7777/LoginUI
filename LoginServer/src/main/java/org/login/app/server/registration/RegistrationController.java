@@ -38,7 +38,7 @@ public class RegistrationController {
     public ResponseEntity<?> createAccount(@Valid @RequestBody User user){
         User foundUser = userRepository.findByUsername(user.getUsername()).orElse(null);
         if(foundUser != null){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Message.builder().message("Username already exists.").build());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Message.builder().message("Username already exists.").build());
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.getSecurityQuestions().forEach(securityQuestion -> securityQuestion.setUser(user));

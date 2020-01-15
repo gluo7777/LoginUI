@@ -1,0 +1,24 @@
+{
+	"firstName": "Honda"
+	,"lastName": "Civic"
+	,"email": "pocketfisher40@gmail.com"
+	,"dateOfBirth": "1911-11-11"
+	,"username": "bobbyb71"
+	,"password": "bobbyb71"
+	,"address": {
+		"addressLine1":"2200 big booby blvd."
+		,"roomNumber":"#666"
+		,"city": "crapland"
+		,"state": "Texas"
+		,"zipcode": "77777"
+	}
+	,"preference": {
+		"newletters": true
+	}
+	,"securityQuestions": [
+		{
+			"question": "What is the name of your first pet?"
+			,"answer": "Your asshole."
+		}
+	]
+}
